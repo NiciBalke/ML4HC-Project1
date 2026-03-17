@@ -1,59 +1,61 @@
 import pandas as pd
 import os
-import math
-import shutil
 from tqdm import tqdm
-
+import shutil
 
 pathToData = "physionet.org/files/challenge-2012/1.0.0/set-a"
-all_data = []
-counter = 0
+output_path = "physionet.org/files/challenge-2012/1.0.0/Outcomes-a.txt" # Assuming outcomes are here
 
-#############################################################
-# Go over each file, preprocess is, concat the files and at the end turn into parquet
-#
-#############################################################
+all_data = []
+
+# Load the outcomes first so we can merge them later
+outcomes_df = pd.read_csv(output_path)
+# Keep only the ID and our target label
+outcomes_df = outcomes_df[['RecordID', 'In-hospital_death']]
+
 for file in tqdm(os.listdir(pathToData)):
-    
     filepath = os.path.join(pathToData, file)
 
-    #ignore the one random .html file that is included in the set-a folder for some reason
     if not filepath.endswith(".txt"): 
         continue
+        
+    # Extract the actual RecordID from the filename (e.g., "132539.txt" -> 132539)
+    record_id = int(file.replace(".txt", ""))
+
     dataframe = pd.read_csv(filepath)
 
-    dataframe["Time"] = dataframe["Time"].apply(lambda x: int(x[:2]) if (x[3:] == "00") else (1+ int(x[:2])))
-    dataframe = dataframe.set_index("Time")
-    #print(dataframe.columns)
-    #print(dataframe)
-    wide_dataframe = dataframe.pivot_table(index = "Time", columns="Parameter", values = "Value")
-    wide_dataframe = wide_dataframe.reindex(range(48))
-    ##print(wide_dataframe)
-    ##print(wide_dataframe.shape[0])
+    # Round time UP to preserve causality
+    dataframe["Time"] = dataframe["Time"].apply(lambda x: int(x[:2]) if (x[3:] == "00") else (1 + int(x[:2])))
     
+    # Pivot the table
+    wide_dataframe = dataframe.pivot_table(index="Time", columns="Parameter", values="Value")
     
-    for i in range( wide_dataframe.shape[1]):
-        currVal = -1
-        for j in range(wide_dataframe.shape[0]):
-            if(math.isnan(wide_dataframe.iloc[j, i])):
-                 wide_dataframe.iloc[j, i] = currVal
-            else:
-                currVal = wide_dataframe.iloc[j, i]
-                
+    # Reindex to 49 steps (0 to 48 inclusive)
+    wide_dataframe = wide_dataframe.reindex(range(49))
     
-    #print("hello")
-    wide_dataframe["patient_id"] = counter
-    counter +=1
+    # Add PatientID using the actual record_id
+    wide_dataframe["PatientID"] = record_id
+    
+    # Reset index so 'Time' becomes a normal column instead of the index
+    wide_dataframe = wide_dataframe.reset_index()
+    
     all_data.append(wide_dataframe)
 
+# Concatenate all patient dataframes
 full_df = pd.concat(all_data, ignore_index=True)
-full_df = full_df.ffill().fillna(-1)
 
-#full_df.to_csv("output.txt", sep=",", index=False)
+# Merge the outcomes based on the RecordID
+# This will attach the 'In-hospital_death' column to every row for a given patient
+full_df = full_df.merge(outcomes_df, left_on='PatientID', right_on='RecordID', how='left')
 
-#if parquet file already exists: instead of appending entries to the old file, delete the file such that a new one will be created
 output_path = "processedDataProxy.parquet"
-if(os.path.exists(output_path)):
-    shutil.rmtree(output_path)
 
-full_df.to_parquet("processedDataProxy.parquet", engine="pyarrow", index=False, partition_cols = ["patient_id"])
+print(full_df.head())
+if os.path.exists(output_path):
+    if os.path.isdir(output_path):
+        shutil.rmtree(output_path)  # Delete if it's a folder
+    else:
+        os.remove(output_path)      # Delete if it's a file
+
+# Save to parquet
+full_df.to_parquet("processedDataProxy.parquet", engine="pyarrow", index=False)
