@@ -36,6 +36,7 @@ for file in tqdm(os.listdir(pathToData)): #os.listdir(pathToData) looks pathToDa
     wide_dataframe = wide_dataframe.reindex(range(49))
     if(imputed):
         wide_dataframe = wide_dataframe.ffill()
+        wide_dataframe = wide_dataframe.fillna(-1)
     
     # Add PatientID using the actual record_id
     wide_dataframe["PatientID"] = record_id
