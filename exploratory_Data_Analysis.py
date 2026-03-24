@@ -1,10 +1,11 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd #data manipulation with dataframe
+import matplotlib.pyplot as plt #frame and graph handling
+import seaborn as sns #for plotting too
+import numpy as np 
 
-# 1. Load the data
+
 print("Loading Parquet file...")
-df = pd.read_parquet("processedDataProxy.parquet")
+df = pd.read_parquet("processedDataProxy.parquet") # parquet is compressed format, in column storage
 
 # 2. Let's pick 4 variables that show completely different behaviors
 # HR (Heart Rate), Bilirubin (Liver enzyme), Gender, Age

@@ -3,7 +3,7 @@ import os
 from tqdm import tqdm
 import shutil
 
-pathToData = "physionet.org/files/challenge-2012/1.0.0/set-a"
+pathToData = "physionet.org/files/challenge-2012/1.0.0/set-a" #containin 4000 patient files
 output_path = "physionet.org/files/challenge-2012/1.0.0/Outcomes-a.txt" # Assuming outcomes are here
 
 all_data = []
@@ -11,18 +11,18 @@ all_data = []
 # Load the outcomes first so we can merge them later
 outcomes_df = pd.read_csv(output_path)
 # Keep only the ID and our target label
-outcomes_df = outcomes_df[['RecordID', 'In-hospital_death']]
+outcomes_df = outcomes_df[['RecordID', 'In-hospital_death']] #filter it to only two columns
 
-for file in tqdm(os.listdir(pathToData)):
-    filepath = os.path.join(pathToData, file)
+for file in tqdm(os.listdir(pathToData)): #os.listdir(pathToData) looks pathToData's directory and takes a list of all filenames in there, then tqdm is for progress bar
+    filepath = os.path.join(pathToData, file) #the entire filetext
 
     if not filepath.endswith(".txt"): 
         continue
         
     # Extract the actual RecordID from the filename (e.g., "132539.txt" -> 132539)
-    record_id = int(file.replace(".txt", ""))
+    record_id = int(file.replace(".txt", "")) #file is a string and we take the txt away
 
-    dataframe = pd.read_csv(filepath)
+    dataframe = pd.read_csv(filepath) #we read for each patient the file in a separate dataframe
 
     # Round time UP to preserve causality
     dataframe["Time"] = dataframe["Time"].apply(lambda x: int(x[:2]) if (x[3:] == "00") else (1 + int(x[:2])))
