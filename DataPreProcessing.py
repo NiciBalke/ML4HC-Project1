@@ -53,6 +53,8 @@ full_df = pd.concat(all_data, ignore_index=True)
 # Merge the outcomes based on the RecordID
 # This will attach the 'In-hospital_death' column to every row for a given patient
 full_df = full_df.merge(outcomes_df, left_on='PatientID', right_on='RecordID', how='left')
+if(imputed):
+    full_df=full_df.fillna(-1)
 output_path = ""
 if(imputed):
     output_path = "processedDataProxy_imputed.parquet"
