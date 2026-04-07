@@ -8,7 +8,7 @@ for set in ["a", "b", "c"]:
         which_dataset:str = set # which physionet set to use
         imputeds:str = imputstr
         imputed: bool = (imputeds == "imputed")
-        output_path = f"parquet_files/processedDataProxy-{which_dataset}-{imputeds}.parquet"
+        output_path:str = f"parquet_files/processedDataProxy-{which_dataset}-{imputeds}.parquet"
 
         pathToData :str= f"physionet.org/files/challenge-2012/1.0.0/set-{which_dataset}" #containin 4000 patient files
         outcome_path:str = f"physionet.org/files/challenge-2012/1.0.0/Outcomes-{which_dataset}.txt" # Assuming outcomes are here
