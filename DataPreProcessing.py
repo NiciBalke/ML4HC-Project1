@@ -3,8 +3,8 @@ import os
 from tqdm import tqdm
 import shutil
 
-pathToData = "physionet.org/files/challenge-2012/1.0.0/set-a"
-output_path = "physionet.org/files/challenge-2012/1.0.0/Outcomes-a.txt" # Assuming outcomes are here
+pathToData = "physionet.org/set-a"
+output_path = "physionet.org/Outcomes-a.txt" # Assuming outcomes are here
 
 all_data = []
 
