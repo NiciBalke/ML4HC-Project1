@@ -43,10 +43,6 @@ for set in ["a", "b", "c"]:
             if(imputed):
                 wide_dataframe = wide_dataframe.ffill()
                 wide_dataframe = wide_dataframe.fillna(-1)
-            if(sk_simpleImputer_mean):
-                si = SimpleImputer(missing_values=-1, strategy="mean")
-                wide_dataframe = si.fit_transform(wide_dataframe.ffill().fillna(-1))
-
             wide_dataframe["PatientID"] = record_id
             # Reset index so 'Time' becomes a normal column instead of the index
             wide_dataframe = wide_dataframe.reset_index()
@@ -60,6 +56,12 @@ for set in ["a", "b", "c"]:
         full_df = full_df.merge(outcomes_df, left_on='PatientID', right_on='RecordID', how='left')
         if(imputed):
             full_df=full_df.fillna(-1)
+        if(sk_simpleImputer_mean):
+            si = SimpleImputer(missing_values=-1, strategy="mean", keep_empty_features=True)# The 'strategy' parameter of SimpleImputer must be a str among {'constant', 'most_frequent', 'median', 'mean'
+            original_cols = full_df.columns
+            original_index = full_df.index
+            full_df = pd.DataFrame(si.fit_transform(full_df.fillna(-1)), columns=original_cols, index = original_index)
+        
 
 
         print(full_df.head())
@@ -68,6 +70,7 @@ for set in ["a", "b", "c"]:
                 shutil.rmtree(output_path)  # Delete if it's a folder
             else:
                 os.remove(output_path)      # Delete if it's a file
+        full_df = full_df.drop(columns = ["ICUType"])
 
         # Save to parquet
         full_df.to_parquet(output_path, engine="pyarrow", index=False)
