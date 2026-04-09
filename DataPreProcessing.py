@@ -2,12 +2,14 @@ import pandas as pd
 import os
 from tqdm import tqdm
 import shutil
+from sklearn.impute import SimpleImputer
 
 for set in ["a", "b", "c"]:  
-    for imputstr in ["imputed", "not-imputed"]:
-        which_dataset:str = set # which physionet set to use
+    for imputstr in ["imputed", "not-imputed", "Sk_SimpleImputer_mean"]:
+        which_dataset:str = set 
         imputeds:str = imputstr
         imputed: bool = (imputeds == "imputed")
+        sk_simpleImputer_mean:bool = (imputeds == "Sk_SimpleImputer_mean")
         output_path:str = f"parquet_files/processedDataProxy-{which_dataset}-{imputeds}.parquet"
 
         pathToData :str= f"physionet.org/files/challenge-2012/1.0.0/set-{which_dataset}" #containin 4000 patient files
@@ -33,8 +35,7 @@ for set in ["a", "b", "c"]:
 
             # Round time UP to preserve causality
             dataframe["Time"] = dataframe["Time"].apply(lambda x: int(x[:2]) if (x[3:] == "00") else (1 + int(x[:2])))
-            
-            # Pivot the table
+            #make time the index and the columns be the parameters
             wide_dataframe = dataframe.pivot_table(index="Time", columns="Parameter", values="Value")
             
             # Reindex to 49 steps (0 to 48 inclusive)
@@ -42,15 +43,14 @@ for set in ["a", "b", "c"]:
             if(imputed):
                 wide_dataframe = wide_dataframe.ffill()
                 wide_dataframe = wide_dataframe.fillna(-1)
-            
-            # Add PatientID using the actual record_id
+            if(sk_simpleImputer_mean):
+                si = SimpleImputer(missing_values=-1, strategy="mean")
+                wide_dataframe = si.fit_transform(wide_dataframe.ffill().fillna(-1))
+
             wide_dataframe["PatientID"] = record_id
-            
             # Reset index so 'Time' becomes a normal column instead of the index
             wide_dataframe = wide_dataframe.reset_index()
-            
             all_data.append(wide_dataframe)
-
         # Concatenate all patient dataframes
         full_df = pd.concat(all_data, ignore_index=True)
 
