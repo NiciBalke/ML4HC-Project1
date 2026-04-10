@@ -2,8 +2,8 @@
 #SBATCH --partition=jobs
 #SBATCH --account=ml4h
 #SBATCH --job-name=ml4h-sweep
-#SBATCH --output=logs/%x-%j.out
-#SBATCH --error=logs/%x-%j.err
+#SBATCH --output=task3/logs/%x-%j.out
+#SBATCH --error=task3/logs/%x-%j.err
 #SBATCH --time=24:00:00
 
 set -euo pipefail
@@ -11,7 +11,7 @@ set -euo pipefail
 # Always run from the project root (directory where sbatch was called).
 cd "${SLURM_SUBMIT_DIR:-$PWD}"
 
-mkdir -p logs
+mkdir -p task3/logs
 
 # Create and activate a local virtual environment.
 if [[ ! -d ".venv" ]]; then
@@ -33,7 +33,7 @@ fi
 # Build parquet dataset once if it doesn't exist.
 if [[ ! -f "processedDataProxy.parquet" ]]; then
   echo "processedDataProxy.parquet not found -> running preprocessing"
-  python DataPreProcessing.py
+  python task3/preprocessing_task3.py
 fi
 
 # W&B sweeps require online auth.
@@ -50,7 +50,7 @@ SWEEP_COUNT="${SWEEP_COUNT:-10}"
 
 CMD=(
   python task3/auto_encoder_base.py
-  --wandb-sweep-config sweep_config.yaml
+  --wandb-sweep-config task3/sweep_config.yaml
   --wandb-project "$WANDB_PROJECT"
   --wandb-sweep-count "$SWEEP_COUNT"
 )

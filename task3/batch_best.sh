@@ -2,8 +2,8 @@
 #SBATCH --partition=jobs
 #SBATCH --account=ml4h
 #SBATCH --job-name=ml4h-best
-#SBATCH --output=logs/%x-%j.out
-#SBATCH --error=logs/%x-%j.err
+#SBATCH --output=task3/logs/%x-%j.out
+#SBATCH --error=task3/logs/%x-%j.err
 #SBATCH --time=24:00:00
 
 set -euo pipefail
@@ -15,7 +15,7 @@ export CUBLAS_WORKSPACE_CONFIG=:4096:8
 # Always run from the project root (directory where sbatch was called)
 cd "${SLURM_SUBMIT_DIR:-$PWD}"
 
-mkdir -p logs
+mkdir -p task3/logs
 
 # Create / activate local virtual environment
 if [[ ! -d ".venv" ]]; then
@@ -36,7 +36,7 @@ fi
 # Build parquet once if missing
 if [[ ! -f "processedDataProxy.parquet" ]]; then
   echo "processedDataProxy.parquet not found -> running preprocessing"
-  python DataPreProcessing.py
+  python task3/preprocessing_task3.py
 fi
 
 # Optional W&B tracking (disabled by default)
@@ -44,7 +44,7 @@ USE_WANDB="${USE_WANDB:-0}"
 WANDB_PROJECT="${WANDB_PROJECT:-ml4h_project}"
 WANDB_ENTITY="${WANDB_ENTITY:-finn-brunke}"
 
-OUTPUT_DIR="${OUTPUT_DIR:-embeddings/best_autoencoder_run}"
+OUTPUT_DIR="${OUTPUT_DIR:-task3/embeddings/best_autoencoder_run}"
 mkdir -p "$OUTPUT_DIR"
 
 CMD=(

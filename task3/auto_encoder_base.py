@@ -1695,7 +1695,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--umap-neighbors", type=int, nargs="+", default=[10, 15, 30, 50])
     parser.add_argument("--umap-min-dist", type=float, nargs="+", default=[0.05, 0.1, 0.25])
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--output-dir", type=str, default="./embeddings")
+    parser.add_argument("--output-dir", type=str, default="task3/embeddings")
     parser.add_argument("--lr", type=float, default=1e-3)
 
     # Weights & Biases tracking / sweeps
