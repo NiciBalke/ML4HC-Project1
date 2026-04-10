@@ -10,8 +10,18 @@ from umap import UMAP
 ground_truth = pd.read_csv("processedOutcomes-b.txt").set_index("RecordID")
 
 # Load both embedding types
-llm_df     = pd.read_csv("Embeddings/llm_embeddings.csv").set_index("RecordID")
-chronos_df = pd.read_csv("Embeddings/chronos.base_embeddings.csv").set_index("RecordID")
+llm_df     = pd.read_csv("Embeddings/LLAMA_embeddings-b.csv").set_index("RecordID")
+chronos_df = pd.read_csv("Embeddings/chronos.base_nopool_embeddings-b.csv").set_index("RecordID")
+
+# If embeddings are stored as a single string column, parse them
+if chronos_df.shape[1] == 1:
+    def parse_embedding(s):
+        # Remove brackets, replace newlines, split on whitespace
+        s = str(s).replace('[', '').replace(']', '').replace('\\n', ' ').replace('\n', ' ')
+        return np.array(s.split(), dtype=np.float32)
+    
+    embeddings = np.stack(chronos_df.iloc[:, 0].apply(parse_embedding).values)
+    chronos_df = pd.DataFrame(embeddings, index=chronos_df.index)
 
 def prepare(embeddings_df, ground_truth):
     merged = ground_truth[["In-hospital_death"]].join(embeddings_df).dropna()
