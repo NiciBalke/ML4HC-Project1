@@ -1,59 +1,76 @@
 import pandas as pd
 import os
-import math
-import shutil
 from tqdm import tqdm
+import shutil
+from sklearn.impute import SimpleImputer
 
+for set in ["a", "b", "c"]:  
+    for imputstr in ["imputed", "not-imputed", "Sk_SimpleImputer_mean"]:
+        which_dataset:str = set 
+        imputeds:str = imputstr
+        imputed: bool = (imputeds == "imputed")
+        sk_simpleImputer_mean:bool = (imputeds == "Sk_SimpleImputer_mean")
+        output_path:str = f"parquet_files/processedDataProxy-{which_dataset}-{imputeds}.parquet"
 
-pathToData = "physionet.org/files/challenge-2012/1.0.0/set-a"
-all_data = []
-counter = 0
+        pathToData :str= f"physionet.org/files/challenge-2012/1.0.0/set-{which_dataset}" #containin 4000 patient files
+        outcome_path:str = f"physionet.org/files/challenge-2012/1.0.0/Outcomes-{which_dataset}.txt" # Assuming outcomes are here
 
-#############################################################
-# Go over each file, preprocess is, concat the files and at the end turn into parquet
-#
-#############################################################
-for file in tqdm(os.listdir(pathToData)):
-    
-    filepath = os.path.join(pathToData, file)
+        all_data:list = []
 
-    #ignore the one random .html file that is included in the set-a folder for some reason
-    if not filepath.endswith(".txt"): 
-        continue
-    dataframe = pd.read_csv(filepath)
+        # Load the outcomes first so we can merge them later
+        outcomes_df:pd.DataFrame= pd.read_csv(outcome_path)
+        # Keep only the ID and our target label
+        outcomes_df = outcomes_df[['RecordID', 'In-hospital_death']] #filter it to only two columns
+        file:str
+        for file in tqdm(os.listdir(pathToData)): #os.listdir(pathToData) looks pathToData's directory and takes a list of all filenames in there, then tqdm is for progress bar
+            filepath:str = os.path.join(pathToData, file) #the entire filetext
 
-    dataframe["Time"] = dataframe["Time"].apply(lambda x: int(x[:2]) if (x[3:] == "00") else (1+ int(x[:2])))
-    dataframe = dataframe.set_index("Time")
-    #print(dataframe.columns)
-    #print(dataframe)
-    wide_dataframe = dataframe.pivot_table(index = "Time", columns="Parameter", values = "Value")
-    wide_dataframe = wide_dataframe.reindex(range(48))
-    ##print(wide_dataframe)
-    ##print(wide_dataframe.shape[0])
-    
-    
-    for i in range( wide_dataframe.shape[1]):
-        currVal = -1
-        for j in range(wide_dataframe.shape[0]):
-            if(math.isnan(wide_dataframe.iloc[j, i])):
-                 wide_dataframe.iloc[j, i] = currVal
-            else:
-                currVal = wide_dataframe.iloc[j, i]
+            if not filepath.endswith(".txt"): 
+                continue
                 
-    
-    #print("hello")
-    wide_dataframe["patient_id"] = counter
-    counter +=1
-    all_data.append(wide_dataframe)
+            # Extract the actual RecordID from the filename (e.g., "132539.txt" -> 132539)
+            record_id = int(file.replace(".txt", "")) #file is a string and we take the txt away
 
-full_df = pd.concat(all_data, ignore_index=True)
-full_df = full_df.ffill().fillna(-1)
+            dataframe:pd.DataFrame = pd.read_csv(filepath) #we read for each patient the file in a separate dataframe
 
-#full_df.to_csv("output.txt", sep=",", index=False)
+            # Round time UP to preserve causality
+            dataframe["Time"] = dataframe["Time"].apply(lambda x: int(x[:2]) if (x[3:] == "00") else (1 + int(x[:2])))
+            #make time the index and the columns be the parameters
+            wide_dataframe = dataframe.pivot_table(index="Time", columns="Parameter", values="Value")
+            
+            # Reindex to 49 steps (0 to 48 inclusive)
+            wide_dataframe = wide_dataframe.reindex(range(49))
+            if(imputed):
+                wide_dataframe = wide_dataframe.ffill()
+                wide_dataframe = wide_dataframe.fillna(-1)
+            wide_dataframe["PatientID"] = record_id
+            # Reset index so 'Time' becomes a normal column instead of the index
+            wide_dataframe = wide_dataframe.reset_index()
+            all_data.append(wide_dataframe)
+        # Concatenate all patient dataframes
+        full_df = pd.concat(all_data, ignore_index=True)
 
-#if parquet file already exists: instead of appending entries to the old file, delete the file such that a new one will be created
-output_path = "processedDataProxy.parquet"
-if(os.path.exists(output_path)):
-    shutil.rmtree(output_path)
 
-full_df.to_parquet("processedDataProxy.parquet", engine="pyarrow", index=False, partition_cols = ["patient_id"])
+        # Merge the outcomes based on the RecordID
+        # This will attach the 'In-hospital_death' column to every row for a given patient
+        full_df = full_df.merge(outcomes_df, left_on='PatientID', right_on='RecordID', how='left')
+        if(imputed):
+            full_df=full_df.fillna(-1)
+        if(sk_simpleImputer_mean):
+            si = SimpleImputer(missing_values=-1, strategy="mean", keep_empty_features=True)# The 'strategy' parameter of SimpleImputer must be a str among {'constant', 'most_frequent', 'median', 'mean'
+            original_cols = full_df.columns
+            original_index = full_df.index
+            full_df = pd.DataFrame(si.fit_transform(full_df.fillna(-1)), columns=original_cols, index = original_index)
+        
+
+
+        print(full_df.head())
+        if os.path.exists(output_path):
+            if os.path.isdir(output_path):
+                shutil.rmtree(output_path)  # Delete if it's a folder
+            else:
+                os.remove(output_path)      # Delete if it's a file
+        full_df = full_df.drop(columns = ["ICUType"])
+
+        # Save to parquet
+        full_df.to_parquet(output_path, engine="pyarrow", index=False)

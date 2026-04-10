@@ -3,3 +3,6 @@ physionet.org/
 processedDataProxy.parquet/
 Outcomes-a.txt
 processedOutcomes-a.txt
+full_df.csv/
+processedDataProxy_imputed.parquet/
+parquet_files/

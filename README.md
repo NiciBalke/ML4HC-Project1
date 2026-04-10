@@ -1,1 +1,26 @@
 # ML4HC
+## 1. Data Processing and Exploration (5 Pts)
+### Q1.1: Data Transformation (1 Pts)
+run DataPreProcessing.py to get parquet files containing the data later used for several methods. reads data, concatinates different patients files, rounds up the timesteps if necessary and imputes it.
+
+
+### Q1.2 Exploratory Data Analysis (2 Pts)
+run EDA.ipynb, where you can alter the range of age or other variables to see their imact on the distribution of the data
+
+### Q1.3 Preprocess data for Machine Learning (2 Pts)
+Implemented in DataPreprocessing.py (different types of imputation) and in supervised_methods_clean.py (Standard Scaler), also tested RobustScaler in supervised_methods.ipynb
+
+## 2. Supervised Learning (16 Pts)
+### Q2.1 Classic Machine Learning Methods (5 Pts)
+RandomForests and LogisticRegression tested in supervised_methods.ipynb
+tested mean, max, min in supervised_methods.ipynb
+from here (https://tsfresh.readthedocs.io/en/latest/) also some other features were tested in supervised_methods.clean
+
+### Q2.2 Recurrent Neural Networks (4 Pts) 
+run LSTM_clean.py and decide on LSTM, Bidirectional LSTM and Transformer models
+
+### Q2.3a: Transformers (3 Pts)
+run LSTM_clean.py with Transformer model
+
+### Q2.3b: Tokenizing Time-Series Data and Transformers (4 Pts)
+run RePreprocessingData.ipynb
