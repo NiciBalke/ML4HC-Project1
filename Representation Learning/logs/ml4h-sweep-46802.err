@@ -1,0 +1,582 @@
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+torch 2.11.0 requires setuptools<82, but you have setuptools 82.0.1 which is incompatible.
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Agent Starting Run: wox5x2mj with config:
+wandb: 	batch_size: 32
+wandb: 	contrastive_weight: 0.5
+wandb: 	d_model: 64
+wandb: 	drop_ratio: 0.1
+wandb: 	hard_negative_k: 5
+wandb: 	layers: 2
+wandb: 	lr: 0.0005
+wandb: 	mask_ratio: 0.2
+wandb: 	max_seq_len: 512
+wandb: 	monitor_every: 1
+wandb: 	multiscale_ratios: [1, 0.9]
+wandb: 	nhead: 4
+wandb: 	pretrain_epochs: 20
+wandb: 	reconstruction_weight: 0.5
+wandb: 	seed: 42
+wandb: 	ssl_method: contrastive
+wandb: 	temperature: 0.2
+wandb: 	time_freq_weight: 0
+wandb: 	value_bins: 10
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: finnbrunke (finn-brunke) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'ml4h_project' when running a sweep.
+wandb: WARNING Ignoring entity 'finn-brunke' when running a sweep.
+wandb: setting up run wox5x2mj
+wandb: Tracking run with wandb version 0.25.1
+wandb: Run data is saved locally in /home/fbrunke/ML4HC-Project1/wandb/run-20260408_161158-wox5x2mj
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run twilight-sweep-1
+wandb: ⭐️ View project at https://wandb.ai/finn-brunke/ml4h_project
+wandb: 🧹 View sweep at https://wandb.ai/finn-brunke/ml4h_project/sweeps/hezn594o
+wandb: 🚀 View run at https://wandb.ai/finn-brunke/ml4h_project/runs/wox5x2mj
+/home/fbrunke/ML4HC-Project1/task3/auto_encoder_base.py:106: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+wandb: updating run metadata
+wandb: uploading history steps 0-20, summary, console lines 120-147
+wandb: 
+wandb: Run history:
+wandb:             pretrain/centroid_distance ▁▁▂▂▂▃▃▃▄▄▄▅▅▆▆▆▇▇██
+wandb:                   pretrain/probe_auroc █▄▂▅▂▁▁▁▃▃▂▄▅▅▇▇▆▇▆▅
+wandb:                    pretrain/silhouette ▁▁▂▂▃▄▄▄▄▅▅▆▆▇▇██▇██
+wandb:    summary/embedding_centroid_distance ▁
+wandb:           summary/embedding_silhouette ▁
+wandb:             summary/q33_davies_bouldin ▁
+wandb:                 summary/q33_silhouette ▁
+wandb: summary/scarcity_1000_pretrained_auroc ▁
+wandb: summary/scarcity_1000_supervised_auroc ▁
+wandb:  summary/scarcity_100_pretrained_auroc ▁
+wandb:                                     +5 ...
+wandb: 
+wandb: Run summary:
+wandb:             pretrain/centroid_distance 0.27087
+wandb:                   pretrain/probe_auroc 0.59989
+wandb:                    pretrain/silhouette -0.02717
+wandb:    summary/embedding_centroid_distance 0.33632
+wandb:           summary/embedding_silhouette -0.01039
+wandb:             summary/q33_davies_bouldin 8.01251
+wandb:                 summary/q33_silhouette -0.01039
+wandb: summary/scarcity_1000_pretrained_auroc 0.69218
+wandb: summary/scarcity_1000_supervised_auroc 0.61578
+wandb:  summary/scarcity_100_pretrained_auroc 0.67492
+wandb:                                     +5 ...
+wandb: 
+wandb: 🚀 View run twilight-sweep-1 at: https://wandb.ai/finn-brunke/ml4h_project/runs/wox5x2mj
+wandb: ⭐️ View project at: https://wandb.ai/finn-brunke/ml4h_project
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260408_161158-wox5x2mj/logs
+wandb: Agent Starting Run: i62m3nsg with config:
+wandb: 	batch_size: 16
+wandb: 	contrastive_weight: 1.5
+wandb: 	d_model: 128
+wandb: 	drop_ratio: 0.1
+wandb: 	hard_negative_k: 1
+wandb: 	layers: 3
+wandb: 	lr: 0.005
+wandb: 	mask_ratio: 0.2
+wandb: 	max_seq_len: 512
+wandb: 	monitor_every: 1
+wandb: 	multiscale_ratios: [1]
+wandb: 	nhead: 4
+wandb: 	pretrain_epochs: 10
+wandb: 	reconstruction_weight: 1
+wandb: 	seed: 42
+wandb: 	ssl_method: hybrid
+wandb: 	temperature: 0.1
+wandb: 	time_freq_weight: 0.2
+wandb: 	value_bins: 10
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: WARNING Ignoring project 'ml4h_project' when running a sweep.
+wandb: WARNING Ignoring entity 'finn-brunke' when running a sweep.
+wandb: setting up run i62m3nsg
+wandb: Tracking run with wandb version 0.25.1
+wandb: Run data is saved locally in /home/fbrunke/ML4HC-Project1/wandb/run-20260408_162106-i62m3nsg
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run curious-sweep-2
+wandb: ⭐️ View project at https://wandb.ai/finn-brunke/ml4h_project
+wandb: 🧹 View sweep at https://wandb.ai/finn-brunke/ml4h_project/sweeps/hezn594o
+wandb: 🚀 View run at https://wandb.ai/finn-brunke/ml4h_project/runs/i62m3nsg
+/home/fbrunke/ML4HC-Project1/task3/auto_encoder_base.py:106: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading history steps 0-10, summary, console lines 97-127
+wandb: 
+wandb: Run history:
+wandb:             pretrain/centroid_distance █▅▃▃▂▁▂▂▁▁
+wandb:                   pretrain/probe_auroc ▅█▅▅▅▄▇▁▄▆
+wandb:                    pretrain/silhouette ▁▇▆▄▂▆▆██▇
+wandb:    summary/embedding_centroid_distance ▁
+wandb:           summary/embedding_silhouette ▁
+wandb:             summary/q33_davies_bouldin ▁
+wandb:                 summary/q33_silhouette ▁
+wandb: summary/scarcity_1000_pretrained_auroc ▁
+wandb: summary/scarcity_1000_supervised_auroc ▁
+wandb:  summary/scarcity_100_pretrained_auroc ▁
+wandb:                                     +5 ...
+wandb: 
+wandb: Run summary:
+wandb:             pretrain/centroid_distance 0.91067
+wandb:                   pretrain/probe_auroc 0.57318
+wandb:                    pretrain/silhouette -0.00166
+wandb:    summary/embedding_centroid_distance 0.9587
+wandb:           summary/embedding_silhouette -0.0212
+wandb:             summary/q33_davies_bouldin 11.60168
+wandb:                 summary/q33_silhouette -0.0212
+wandb: summary/scarcity_1000_pretrained_auroc 0.66899
+wandb: summary/scarcity_1000_supervised_auroc 0.55963
+wandb:  summary/scarcity_100_pretrained_auroc 0.61071
+wandb:                                     +5 ...
+wandb: 
+wandb: 🚀 View run curious-sweep-2 at: https://wandb.ai/finn-brunke/ml4h_project/runs/i62m3nsg
+wandb: ⭐️ View project at: https://wandb.ai/finn-brunke/ml4h_project
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260408_162106-i62m3nsg/logs
+wandb: Agent Starting Run: a6uzasnc with config:
+wandb: 	batch_size: 32
+wandb: 	contrastive_weight: 0.5
+wandb: 	d_model: 128
+wandb: 	drop_ratio: 0.05
+wandb: 	hard_negative_k: 5
+wandb: 	layers: 3
+wandb: 	lr: 0.001
+wandb: 	mask_ratio: 0.2
+wandb: 	max_seq_len: 512
+wandb: 	monitor_every: 1
+wandb: 	multiscale_ratios: [1, 0.8]
+wandb: 	nhead: 2
+wandb: 	pretrain_epochs: 15
+wandb: 	reconstruction_weight: 1.5
+wandb: 	seed: 42
+wandb: 	ssl_method: contrastive
+wandb: 	temperature: 0.05
+wandb: 	time_freq_weight: 0.05
+wandb: 	value_bins: 10
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: WARNING Ignoring project 'ml4h_project' when running a sweep.
+wandb: WARNING Ignoring entity 'finn-brunke' when running a sweep.
+wandb: Tracking run with wandb version 0.25.1
+wandb: Run data is saved locally in /home/fbrunke/ML4HC-Project1/wandb/run-20260408_163041-a6uzasnc
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucky-sweep-3
+wandb: ⭐️ View project at https://wandb.ai/finn-brunke/ml4h_project
+wandb: 🧹 View sweep at https://wandb.ai/finn-brunke/ml4h_project/sweeps/hezn594o
+wandb: 🚀 View run at https://wandb.ai/finn-brunke/ml4h_project/runs/a6uzasnc
+/home/fbrunke/ML4HC-Project1/task3/auto_encoder_base.py:106: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+wandb: updating run metadata
+wandb: uploading config.yaml; uploading output.log
+wandb: 
+wandb: Run history:
+wandb:             pretrain/centroid_distance █▂▂▃▁▃▂█▅▄▃▁▂▃▃
+wandb:                   pretrain/probe_auroc ▁▂▃▃▄▅▅▅▆▇█████
+wandb:                    pretrain/silhouette ▃▁▂▂▄▅▅█▇▇▇████
+wandb:    summary/embedding_centroid_distance ▁
+wandb:           summary/embedding_silhouette ▁
+wandb:             summary/q33_davies_bouldin ▁
+wandb:                 summary/q33_silhouette ▁
+wandb: summary/scarcity_1000_pretrained_auroc ▁
+wandb: summary/scarcity_1000_supervised_auroc ▁
+wandb:  summary/scarcity_100_pretrained_auroc ▁
+wandb:                                     +5 ...
+wandb: 
+wandb: Run summary:
+wandb:             pretrain/centroid_distance 0.23915
+wandb:                   pretrain/probe_auroc 0.51255
+wandb:                    pretrain/silhouette -0.03285
+wandb:    summary/embedding_centroid_distance 0.23712
+wandb:           summary/embedding_silhouette -0.02394
+wandb:             summary/q33_davies_bouldin 10.15621
+wandb:                 summary/q33_silhouette -0.02394
+wandb: summary/scarcity_1000_pretrained_auroc 0.73198
+wandb: summary/scarcity_1000_supervised_auroc 0.56671
+wandb:  summary/scarcity_100_pretrained_auroc 0.66811
+wandb:                                     +5 ...
+wandb: 
+wandb: 🚀 View run lucky-sweep-3 at: https://wandb.ai/finn-brunke/ml4h_project/runs/a6uzasnc
+wandb: ⭐️ View project at: https://wandb.ai/finn-brunke/ml4h_project
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260408_163041-a6uzasnc/logs
+wandb: Sweep Agent: Waiting for job.
+wandb: Job received.
+wandb: Agent Starting Run: 3wdz4ldh with config:
+wandb: 	batch_size: 32
+wandb: 	contrastive_weight: 0.5
+wandb: 	d_model: 64
+wandb: 	drop_ratio: 0.05
+wandb: 	hard_negative_k: 3
+wandb: 	layers: 2
+wandb: 	lr: 0.0005
+wandb: 	mask_ratio: 0.2
+wandb: 	max_seq_len: 512
+wandb: 	monitor_every: 1
+wandb: 	multiscale_ratios: [1, 0.9]
+wandb: 	nhead: 2
+wandb: 	pretrain_epochs: 15
+wandb: 	reconstruction_weight: 0.5
+wandb: 	seed: 42
+wandb: 	ssl_method: autoencoder
+wandb: 	temperature: 0.1
+wandb: 	time_freq_weight: 0.1
+wandb: 	value_bins: 10
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: WARNING Ignoring project 'ml4h_project' when running a sweep.
+wandb: WARNING Ignoring entity 'finn-brunke' when running a sweep.
+wandb: setting up run 3wdz4ldh
+wandb: Tracking run with wandb version 0.25.1
+wandb: Run data is saved locally in /home/fbrunke/ML4HC-Project1/wandb/run-20260408_164029-3wdz4ldh
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run fallen-sweep-4
+wandb: ⭐️ View project at https://wandb.ai/finn-brunke/ml4h_project
+wandb: 🧹 View sweep at https://wandb.ai/finn-brunke/ml4h_project/sweeps/hezn594o
+wandb: 🚀 View run at https://wandb.ai/finn-brunke/ml4h_project/runs/3wdz4ldh
+/home/fbrunke/ML4HC-Project1/task3/auto_encoder_base.py:106: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+wandb: updating run metadata
+wandb: uploading output.log
+wandb: uploading history steps 0-15, summary, console lines 98-137
+wandb: 
+wandb: Run history:
+wandb:             pretrain/centroid_distance ▁▃▄▅▅▅▅▅▅▆▆▆▇██
+wandb:                   pretrain/probe_auroc ▁▅▇▇▆▆▆▆▆▇▇▇███
+wandb:                    pretrain/silhouette ▃▂▃▂▂▁▁▁▂▃▅▆▆▇█
+wandb:    summary/embedding_centroid_distance ▁
+wandb:           summary/embedding_silhouette ▁
+wandb:             summary/q33_davies_bouldin ▁
+wandb:                 summary/q33_silhouette ▁
+wandb: summary/scarcity_1000_pretrained_auroc ▁
+wandb: summary/scarcity_1000_supervised_auroc ▁
+wandb:  summary/scarcity_100_pretrained_auroc ▁
+wandb:                                     +5 ...
+wandb: 
+wandb: Run summary:
+wandb:             pretrain/centroid_distance 0.62554
+wandb:                   pretrain/probe_auroc 0.59535
+wandb:                    pretrain/silhouette -0.02453
+wandb:    summary/embedding_centroid_distance 1.01402
+wandb:           summary/embedding_silhouette -0.02537
+wandb:             summary/q33_davies_bouldin 8.40237
+wandb:                 summary/q33_silhouette -0.02537
+wandb: summary/scarcity_1000_pretrained_auroc 0.63778
+wandb: summary/scarcity_1000_supervised_auroc 0.57614
+wandb:  summary/scarcity_100_pretrained_auroc 0.60765
+wandb:                                     +5 ...
+wandb: 
+wandb: 🚀 View run fallen-sweep-4 at: https://wandb.ai/finn-brunke/ml4h_project/runs/3wdz4ldh
+wandb: ⭐️ View project at: https://wandb.ai/finn-brunke/ml4h_project
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260408_164029-3wdz4ldh/logs
+wandb: Agent Starting Run: euh0um3w with config:
+wandb: 	batch_size: 16
+wandb: 	contrastive_weight: 0.5
+wandb: 	d_model: 64
+wandb: 	drop_ratio: 0.1
+wandb: 	hard_negative_k: 1
+wandb: 	layers: 2
+wandb: 	lr: 0.005
+wandb: 	mask_ratio: 0.1
+wandb: 	max_seq_len: 512
+wandb: 	monitor_every: 1
+wandb: 	multiscale_ratios: [1, 0.8]
+wandb: 	nhead: 2
+wandb: 	pretrain_epochs: 10
+wandb: 	reconstruction_weight: 0.5
+wandb: 	seed: 42
+wandb: 	ssl_method: hybrid
+wandb: 	temperature: 0.05
+wandb: 	time_freq_weight: 0.2
+wandb: 	value_bins: 10
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: WARNING Ignoring project 'ml4h_project' when running a sweep.
+wandb: WARNING Ignoring entity 'finn-brunke' when running a sweep.
+wandb: setting up run euh0um3w
+wandb: Tracking run with wandb version 0.25.1
+wandb: Run data is saved locally in /home/fbrunke/ML4HC-Project1/wandb/run-20260408_164816-euh0um3w
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run helpful-sweep-5
+wandb: ⭐️ View project at https://wandb.ai/finn-brunke/ml4h_project
+wandb: 🧹 View sweep at https://wandb.ai/finn-brunke/ml4h_project/sweeps/hezn594o
+wandb: 🚀 View run at https://wandb.ai/finn-brunke/ml4h_project/runs/euh0um3w
+/home/fbrunke/ML4HC-Project1/task3/auto_encoder_base.py:106: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json
+wandb: uploading history steps 0-10, summary, console lines 100-127
+wandb: 
+wandb: Run history:
+wandb:             pretrain/centroid_distance ▃▁▂▁▄▆▆█▅▇
+wandb:                   pretrain/probe_auroc ▂█▆▅▂▁▅▇▃▃
+wandb:                    pretrain/silhouette ▁▂▃▄▆▆▄▆█▅
+wandb:    summary/embedding_centroid_distance ▁
+wandb:           summary/embedding_silhouette ▁
+wandb:             summary/q33_davies_bouldin ▁
+wandb:                 summary/q33_silhouette ▁
+wandb: summary/scarcity_1000_pretrained_auroc ▁
+wandb: summary/scarcity_1000_supervised_auroc ▁
+wandb:  summary/scarcity_100_pretrained_auroc ▁
+wandb:                                     +5 ...
+wandb: 
+wandb: Run summary:
+wandb:             pretrain/centroid_distance 0.90312
+wandb:                   pretrain/probe_auroc 0.45994
+wandb:                    pretrain/silhouette -0.02267
+wandb:    summary/embedding_centroid_distance 1.42048
+wandb:           summary/embedding_silhouette -0.00961
+wandb:             summary/q33_davies_bouldin 7.63836
+wandb:                 summary/q33_silhouette -0.00961
+wandb: summary/scarcity_1000_pretrained_auroc 0.64906
+wandb: summary/scarcity_1000_supervised_auroc 0.62853
+wandb:  summary/scarcity_100_pretrained_auroc 0.60942
+wandb:                                     +5 ...
+wandb: 
+wandb: 🚀 View run helpful-sweep-5 at: https://wandb.ai/finn-brunke/ml4h_project/runs/euh0um3w
+wandb: ⭐️ View project at: https://wandb.ai/finn-brunke/ml4h_project
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260408_164816-euh0um3w/logs
+wandb: Agent Starting Run: wkvu65f3 with config:
+wandb: 	batch_size: 16
+wandb: 	contrastive_weight: 1.5
+wandb: 	d_model: 64
+wandb: 	drop_ratio: 0.1
+wandb: 	hard_negative_k: 3
+wandb: 	layers: 1
+wandb: 	lr: 0.002
+wandb: 	mask_ratio: 0.3
+wandb: 	max_seq_len: 512
+wandb: 	monitor_every: 1
+wandb: 	multiscale_ratios: [1]
+wandb: 	nhead: 4
+wandb: 	pretrain_epochs: 20
+wandb: 	reconstruction_weight: 1.5
+wandb: 	seed: 42
+wandb: 	ssl_method: hybrid
+wandb: 	temperature: 0.2
+wandb: 	time_freq_weight: 0
+wandb: 	value_bins: 10
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: WARNING Ignoring project 'ml4h_project' when running a sweep.
+wandb: WARNING Ignoring entity 'finn-brunke' when running a sweep.
+wandb: setting up run wkvu65f3
+wandb: Tracking run with wandb version 0.25.1
+wandb: Run data is saved locally in /home/fbrunke/ML4HC-Project1/wandb/run-20260408_165708-wkvu65f3
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run rosy-sweep-6
+wandb: ⭐️ View project at https://wandb.ai/finn-brunke/ml4h_project
+wandb: 🧹 View sweep at https://wandb.ai/finn-brunke/ml4h_project/sweeps/hezn594o
+wandb: 🚀 View run at https://wandb.ai/finn-brunke/ml4h_project/runs/wkvu65f3
+/home/fbrunke/ML4HC-Project1/task3/auto_encoder_base.py:106: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/home/fbrunke/ML4HC-Project1/.venv/lib/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+wandb: updating run metadata
+wandb: uploading history steps 0-20, summary, console lines 117-147
+wandb: 
+wandb: Run history:
+wandb:             pretrain/centroid_distance ▁▁▂▃▃▄▄▄▅▅▆▆▆▇▇▇▇▇▇█
+wandb:                   pretrain/probe_auroc ▁▂▄▄▅▆▇██▇▇▆▇▆▇▇▇▇▇▇
+wandb:                    pretrain/silhouette ▁▄▄▅▃▃▃▅▅▇▅▆▇▆▇▇▇▇██
+wandb:    summary/embedding_centroid_distance ▁
+wandb:           summary/embedding_silhouette ▁
+wandb:             summary/q33_davies_bouldin ▁
+wandb:                 summary/q33_silhouette ▁
+wandb: summary/scarcity_1000_pretrained_auroc ▁
+wandb: summary/scarcity_1000_supervised_auroc ▁
+wandb:  summary/scarcity_100_pretrained_auroc ▁
+wandb:                                     +5 ...
+wandb: 
+wandb: Run summary:
+wandb:             pretrain/centroid_distance 0.83358
+wandb:                   pretrain/probe_auroc 0.62901
+wandb:                    pretrain/silhouette -0.01518
+wandb:    summary/embedding_centroid_distance 1.45998
+wandb:           summary/embedding_silhouette -0.01198
+wandb:             summary/q33_davies_bouldin 7.15785
+wandb:                 summary/q33_silhouette -0.01198
+wandb: summary/scarcity_1000_pretrained_auroc 0.65593
+wandb: summary/scarcity_1000_supervised_auroc 0.58189
+wandb:  summary/scarcity_100_pretrained_auroc 0.56162
+wandb:                                     +5 ...
+wandb: 
+wandb: 🚀 View run rosy-sweep-6 at: https://wandb.ai/finn-brunke/ml4h_project/runs/wkvu65f3
+wandb: ⭐️ View project at: https://wandb.ai/finn-brunke/ml4h_project
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260408_165708-wkvu65f3/logs
+wandb: Sweep Agent: Waiting for job.
+wandb: Job received.
+wandb: Agent Starting Run: pwoh6xqy with config:
+wandb: 	batch_size: 32
+wandb: 	contrastive_weight: 1.5
+wandb: 	d_model: 128
+wandb: 	drop_ratio: 0.1
+wandb: 	hard_negative_k: 1
+wandb: 	layers: 2
+wandb: 	lr: 0.0005
+wandb: 	mask_ratio: 0.2
+wandb: 	max_seq_len: 512
+wandb: 	monitor_every: 1
+wandb: 	multiscale_ratios: [1, 0.9]
+wandb: 	nhead: 4
+wandb: 	pretrain_epochs: 10
+wandb: 	reconstruction_weight: 1.5
+wandb: 	seed: 42
+wandb: 	ssl_method: autoencoder
+wandb: 	temperature: 0.2
+wandb: 	time_freq_weight: 0.2
+wandb: 	value_bins: 10
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: WARNING Ignoring project 'ml4h_project' when running a sweep.
+wandb: WARNING Ignoring entity 'finn-brunke' when running a sweep.
+wandb: setting up run pwoh6xqy
+wandb: Tracking run with wandb version 0.25.1
+wandb: Run data is saved locally in /home/fbrunke/ML4HC-Project1/wandb/run-20260408_170631-pwoh6xqy
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run usual-sweep-7
+wandb: ⭐️ View project at https://wandb.ai/finn-brunke/ml4h_project
+wandb: 🧹 View sweep at https://wandb.ai/finn-brunke/ml4h_project/sweeps/hezn594o
+wandb: 🚀 View run at https://wandb.ai/finn-brunke/ml4h_project/runs/pwoh6xqy
+[2026-04-08T17:12:01.005] error: *** JOB 46802 ON studgpu-node01 CANCELLED AT 2026-04-08T17:12:01 DUE TO TIME LIMIT ***

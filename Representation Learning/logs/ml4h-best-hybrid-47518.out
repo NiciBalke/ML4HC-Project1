@@ -1,0 +1,247 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.0.1)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.12/site-packages (81.0.0)
+Collecting setuptools
+  Using cached setuptools-82.0.1-py3-none-any.whl.metadata (6.5 kB)
+Requirement already satisfied: wheel in ./.venv/lib/python3.12/site-packages (0.46.3)
+Requirement already satisfied: packaging>=24.0 in ./.venv/lib/python3.12/site-packages (from wheel) (26.0)
+Using cached setuptools-82.0.1-py3-none-any.whl (1.0 MB)
+Installing collected packages: setuptools
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 81.0.0
+    Uninstalling setuptools-81.0.0:
+      Successfully uninstalled setuptools-81.0.0
+Successfully installed setuptools-82.0.1
+Requirement already satisfied: pandas in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 1)) (3.0.2)
+Requirement already satisfied: numpy in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (2.4.4)
+Requirement already satisfied: torch in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (2.11.0)
+Requirement already satisfied: matplotlib in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (3.10.8)
+Requirement already satisfied: scikit-learn in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (1.8.0)
+Requirement already satisfied: umap-learn in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 6)) (0.5.11)
+Requirement already satisfied: PyYAML in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 7)) (6.0.3)
+Requirement already satisfied: pyarrow in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 8)) (23.0.1)
+Requirement already satisfied: wandb in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 9)) (0.25.1)
+Requirement already satisfied: weave in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 10)) (0.52.36)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./.venv/lib/python3.12/site-packages (from pandas->-r requirements.txt (line 1)) (2.9.0.post0)
+Requirement already satisfied: filelock in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (3.25.2)
+Requirement already satisfied: typing-extensions>=4.10.0 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (4.15.0)
+Collecting setuptools<82 (from torch->-r requirements.txt (line 3))
+  Using cached setuptools-81.0.0-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (2026.3.0)
+Requirement already satisfied: cuda-toolkit==13.0.2 in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (13.0.2)
+Requirement already satisfied: cuda-bindings<14,>=13.0.3 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (13.2.0)
+Requirement already satisfied: nvidia-cudnn-cu13==9.19.0.56 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (9.19.0.56)
+Requirement already satisfied: nvidia-cusparselt-cu13==0.8.0 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (0.8.0)
+Requirement already satisfied: nvidia-nccl-cu13==2.28.9 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (2.28.9)
+Requirement already satisfied: nvidia-nvshmem-cu13==3.4.5 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (3.4.5)
+Requirement already satisfied: triton==3.6.0 in ./.venv/lib/python3.12/site-packages (from torch->-r requirements.txt (line 3)) (3.6.0)
+Requirement already satisfied: nvidia-cublas==13.1.0.3.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (13.1.0.3)
+Requirement already satisfied: nvidia-cuda-runtime==13.0.96.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (13.0.96)
+Requirement already satisfied: nvidia-cufft==12.0.0.61.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (12.0.0.61)
+Requirement already satisfied: nvidia-cufile==1.15.1.6.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (1.15.1.6)
+Requirement already satisfied: nvidia-cuda-cupti==13.0.85.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (13.0.85)
+Requirement already satisfied: nvidia-curand==10.4.0.35.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (10.4.0.35)
+Requirement already satisfied: nvidia-cusolver==12.0.4.66.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (12.0.4.66)
+Requirement already satisfied: nvidia-cusparse==12.6.3.3.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (12.6.3.3)
+Requirement already satisfied: nvidia-nvjitlink==13.0.88.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (13.0.88)
+Requirement already satisfied: nvidia-cuda-nvrtc==13.0.88.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (13.0.88)
+Requirement already satisfied: nvidia-nvtx==13.0.85.* in ./.venv/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->-r requirements.txt (line 3)) (13.0.85)
+Requirement already satisfied: cuda-pathfinder~=1.1 in ./.venv/lib/python3.12/site-packages (from cuda-bindings<14,>=13.0.3->torch->-r requirements.txt (line 3)) (1.5.2)
+Requirement already satisfied: contourpy>=1.0.1 in ./.venv/lib/python3.12/site-packages (from matplotlib->-r requirements.txt (line 4)) (1.3.3)
+Requirement already satisfied: cycler>=0.10 in ./.venv/lib/python3.12/site-packages (from matplotlib->-r requirements.txt (line 4)) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in ./.venv/lib/python3.12/site-packages (from matplotlib->-r requirements.txt (line 4)) (4.62.1)
+Requirement already satisfied: kiwisolver>=1.3.1 in ./.venv/lib/python3.12/site-packages (from matplotlib->-r requirements.txt (line 4)) (1.5.0)
+Requirement already satisfied: packaging>=20.0 in ./.venv/lib/python3.12/site-packages (from matplotlib->-r requirements.txt (line 4)) (26.0)
+Requirement already satisfied: pillow>=8 in ./.venv/lib/python3.12/site-packages (from matplotlib->-r requirements.txt (line 4)) (12.2.0)
+Requirement already satisfied: pyparsing>=3 in ./.venv/lib/python3.12/site-packages (from matplotlib->-r requirements.txt (line 4)) (3.3.2)
+Requirement already satisfied: scipy>=1.10.0 in ./.venv/lib/python3.12/site-packages (from scikit-learn->-r requirements.txt (line 5)) (1.17.1)
+Requirement already satisfied: joblib>=1.3.0 in ./.venv/lib/python3.12/site-packages (from scikit-learn->-r requirements.txt (line 5)) (1.5.3)
+Requirement already satisfied: threadpoolctl>=3.2.0 in ./.venv/lib/python3.12/site-packages (from scikit-learn->-r requirements.txt (line 5)) (3.6.0)
+Requirement already satisfied: numba>=0.51.2 in ./.venv/lib/python3.12/site-packages (from umap-learn->-r requirements.txt (line 6)) (0.65.0)
+Requirement already satisfied: pynndescent>=0.5 in ./.venv/lib/python3.12/site-packages (from umap-learn->-r requirements.txt (line 6)) (0.6.0)
+Requirement already satisfied: tqdm in ./.venv/lib/python3.12/site-packages (from umap-learn->-r requirements.txt (line 6)) (4.67.3)
+Requirement already satisfied: click>=8.0.1 in ./.venv/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 9)) (8.3.2)
+Requirement already satisfied: gitpython!=3.1.29,>=1.0.0 in ./.venv/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 9)) (3.1.46)
+Requirement already satisfied: platformdirs in ./.venv/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 9)) (4.9.4)
+Requirement already satisfied: protobuf!=5.28.0,!=5.29.0,<7,>4.21.0 in ./.venv/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 9)) (6.33.6)
+Requirement already satisfied: pydantic<3 in ./.venv/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 9)) (2.12.5)
+Requirement already satisfied: requests<3,>=2.0.0 in ./.venv/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 9)) (2.33.1)
+Requirement already satisfied: sentry-sdk>=2.0.0 in ./.venv/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 9)) (2.57.0)
+Requirement already satisfied: annotated-types>=0.6.0 in ./.venv/lib/python3.12/site-packages (from pydantic<3->wandb->-r requirements.txt (line 9)) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./.venv/lib/python3.12/site-packages (from pydantic<3->wandb->-r requirements.txt (line 9)) (2.41.5)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./.venv/lib/python3.12/site-packages (from pydantic<3->wandb->-r requirements.txt (line 9)) (0.4.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 9)) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 9)) (3.11)
+Requirement already satisfied: urllib3<3,>=1.26 in ./.venv/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 9)) (2.6.3)
+Requirement already satisfied: certifi>=2023.5.7 in ./.venv/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 9)) (2026.2.25)
+Requirement already satisfied: cachetools>=6.2.4 in ./.venv/lib/python3.12/site-packages (from weave->-r requirements.txt (line 10)) (7.0.5)
+Requirement already satisfied: diskcache-weave==5.6.3.post1 in ./.venv/lib/python3.12/site-packages (from weave->-r requirements.txt (line 10)) (5.6.3.post1)
+Requirement already satisfied: gql>=3.0.0 in ./.venv/lib/python3.12/site-packages (from gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (4.0.0)
+Requirement already satisfied: jsonschema>=4.23.0 in ./.venv/lib/python3.12/site-packages (from weave->-r requirements.txt (line 10)) (4.26.0)
+Requirement already satisfied: polyfile-weave>=0.5.9 in ./.venv/lib/python3.12/site-packages (from weave->-r requirements.txt (line 10)) (0.5.9)
+Requirement already satisfied: tenacity!=8.4.0,>=8.3.0 in ./.venv/lib/python3.12/site-packages (from weave->-r requirements.txt (line 10)) (9.1.4)
+Requirement already satisfied: gitdb<5,>=4.0.1 in ./.venv/lib/python3.12/site-packages (from gitpython!=3.1.29,>=1.0.0->wandb->-r requirements.txt (line 9)) (4.0.12)
+Requirement already satisfied: smmap<6,>=3.0.1 in ./.venv/lib/python3.12/site-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.29,>=1.0.0->wandb->-r requirements.txt (line 9)) (5.0.3)
+Requirement already satisfied: graphql-core<3.3,>=3.2 in ./.venv/lib/python3.12/site-packages (from gql>=3.0.0->gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (3.2.8)
+Requirement already satisfied: yarl<2.0,>=1.6 in ./.venv/lib/python3.12/site-packages (from gql>=3.0.0->gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (1.23.0)
+Requirement already satisfied: backoff<3.0,>=1.11.1 in ./.venv/lib/python3.12/site-packages (from gql>=3.0.0->gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (2.2.1)
+Requirement already satisfied: anyio<5,>=3.0 in ./.venv/lib/python3.12/site-packages (from gql>=3.0.0->gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (4.13.0)
+Requirement already satisfied: multidict>=4.0 in ./.venv/lib/python3.12/site-packages (from yarl<2.0,>=1.6->gql>=3.0.0->gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (6.7.1)
+Requirement already satisfied: propcache>=0.2.1 in ./.venv/lib/python3.12/site-packages (from yarl<2.0,>=1.6->gql>=3.0.0->gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (0.4.1)
+Requirement already satisfied: httpx<1,>=0.27.0 in ./.venv/lib/python3.12/site-packages (from gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (0.28.1)
+Requirement already satisfied: httpcore==1.* in ./.venv/lib/python3.12/site-packages (from httpx<1,>=0.27.0->gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (1.0.9)
+Requirement already satisfied: h11>=0.16 in ./.venv/lib/python3.12/site-packages (from httpcore==1.*->httpx<1,>=0.27.0->gql[httpx]>=3.0.0->weave->-r requirements.txt (line 10)) (0.16.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.23.0->weave->-r requirements.txt (line 10)) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.23.0->weave->-r requirements.txt (line 10)) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.23.0->weave->-r requirements.txt (line 10)) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.23.0->weave->-r requirements.txt (line 10)) (0.30.0)
+Requirement already satisfied: llvmlite<0.48,>=0.47.0dev0 in ./.venv/lib/python3.12/site-packages (from numba>=0.51.2->umap-learn->-r requirements.txt (line 6)) (0.47.0)
+Requirement already satisfied: abnf~=2.2.0 in ./.venv/lib/python3.12/site-packages (from polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (2.2.0)
+Requirement already satisfied: chardet>=5.0.0 in ./.venv/lib/python3.12/site-packages (from polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (7.4.1)
+Requirement already satisfied: cint>=1.0.0 in ./.venv/lib/python3.12/site-packages (from polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (1.0.0)
+Requirement already satisfied: fickling>=0.0.8 in ./.venv/lib/python3.12/site-packages (from polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (0.1.10)
+Requirement already satisfied: graphviz>=0.20.1 in ./.venv/lib/python3.12/site-packages (from polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (0.21)
+Requirement already satisfied: intervaltree>=2.4.0 in ./.venv/lib/python3.12/site-packages (from polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (3.2.1)
+Requirement already satisfied: kaitaistruct>=0.11 in ./.venv/lib/python3.12/site-packages (from polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (0.11)
+Requirement already satisfied: pdfminer.six>=20251230 in ./.venv/lib/python3.12/site-packages (from polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (20260107)
+Requirement already satisfied: sortedcontainers in ./.venv/lib/python3.12/site-packages (from intervaltree>=2.4.0->polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (2.4.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch->-r requirements.txt (line 3)) (3.0.3)
+Requirement already satisfied: cryptography>=36.0.0 in ./.venv/lib/python3.12/site-packages (from pdfminer.six>=20251230->polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (46.0.7)
+Requirement already satisfied: cffi>=2.0.0 in ./.venv/lib/python3.12/site-packages (from cryptography>=36.0.0->pdfminer.six>=20251230->polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (2.0.0)
+Requirement already satisfied: pycparser in ./.venv/lib/python3.12/site-packages (from cffi>=2.0.0->cryptography>=36.0.0->pdfminer.six>=20251230->polyfile-weave>=0.5.9->weave->-r requirements.txt (line 10)) (3.0)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.12/site-packages (from python-dateutil>=2.8.2->pandas->-r requirements.txt (line 1)) (1.17.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch->-r requirements.txt (line 3)) (1.3.0)
+Using cached setuptools-81.0.0-py3-none-any.whl (1.1 MB)
+Installing collected packages: setuptools
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 82.0.1
+    Uninstalling setuptools-82.0.1:
+      Successfully uninstalled setuptools-82.0.1
+Successfully installed setuptools-81.0.0
+Launching best-hybrid run: python task3/auto_encoder_base.py --parquet processedDataProxy.parquet --batch-size 32 --d-model 64 --nhead 4 --layers 2 --pretrain-epochs 20 --ssl-method hybrid --lr 0.001 --mask-ratio 0.1 --drop-ratio 0.1 --temperature 0.2 --reconstruction-weight 1.0 --contrastive-weight 1.5 --multiscale-ratios 1.0 0.9 --hard-negative-k 5 --time-freq-weight 0.1 --monitor-every 1 --max-seq-len 512 --value-bins 10 --seed 42 --early-stop-patience 5 --early-stop-min-delta 0.0001 --restore-best-weights --output-dir embeddings/best_hybrid_run
+Using device: cuda
+Tokenized cohort: patients=4000, seq_len=512, vocab=18021
+
+======================================================================
+Q3.1: PRETRAINING AND LINEAR PROBES
+======================================================================
+
+Q3.1.1: Pretraining encoder with ssl_method=hybrid...
+Epoch 1/20 | Hybrid Train Total: 11.0947 (Recon=8.1866, Contrast=1.9365) | Hybrid Val Total: 8.3377 (Recon=6.3789, Contrast=1.3037) | TF Train=0.0331 | TF Val=0.0324 | Probe AUROC=0.6675 | Silhouette=0.0106 | CentroidDist=0.1461
+Epoch 2/20 | Hybrid Train Total: 6.8557 (Recon=4.9886, Contrast=1.2426) | Hybrid Val Total: 5.5992 (Recon=3.8368, Contrast=1.1728) | TF Train=0.0320 | TF Val=0.0320 | Probe AUROC=0.6864 | Silhouette=0.0129 | CentroidDist=0.2459
+Epoch 3/20 | Hybrid Train Total: 4.6949 (Recon=3.1379, Contrast=1.0359) | Hybrid Val Total: 4.3067 (Recon=2.6090, Contrast=1.1297) | TF Train=0.0316 | TF Val=0.0316 | Probe AUROC=0.6848 | Silhouette=0.0155 | CentroidDist=0.3420
+Epoch 4/20 | Hybrid Train Total: 3.7803 (Recon=2.3416, Contrast=0.9571) | Hybrid Val Total: 3.5989 (Recon=2.1608, Contrast=0.9566) | TF Train=0.0315 | TF Val=0.0316 | Probe AUROC=0.6904 | Silhouette=0.0162 | CentroidDist=0.4738
+Epoch 5/20 | Hybrid Train Total: 3.3481 (Recon=2.0499, Contrast=0.8634) | Hybrid Val Total: 3.3196 (Recon=1.9815, Contrast=0.8899) | TF Train=0.0314 | TF Val=0.0312 | Probe AUROC=0.6878 | Silhouette=0.0197 | CentroidDist=0.5593
+Epoch 6/20 | Hybrid Train Total: 3.2244 (Recon=1.9278, Contrast=0.8623) | Hybrid Val Total: 3.1339 (Recon=1.8955, Contrast=0.8236) | TF Train=0.0313 | TF Val=0.0310 | Probe AUROC=0.6907 | Silhouette=0.0163 | CentroidDist=0.6307
+Epoch 7/20 | Hybrid Train Total: 3.0164 (Recon=1.8464, Contrast=0.7779) | Hybrid Val Total: 3.0254 (Recon=1.8392, Contrast=0.7887) | TF Train=0.0311 | TF Val=0.0312 | Probe AUROC=0.6891 | Silhouette=0.0188 | CentroidDist=0.7197
+Epoch 8/20 | Hybrid Train Total: 2.9006 (Recon=1.7960, Contrast=0.7343) | Hybrid Val Total: 2.9578 (Recon=1.7949, Contrast=0.7732) | TF Train=0.0311 | TF Val=0.0311 | Probe AUROC=0.6867 | Silhouette=0.0175 | CentroidDist=0.7847
+Epoch 9/20 | Hybrid Train Total: 2.8424 (Recon=1.7512, Contrast=0.7254) | Hybrid Val Total: 2.8594 (Recon=1.7555, Contrast=0.7338) | TF Train=0.0312 | TF Val=0.0314 | Probe AUROC=0.6987 | Silhouette=0.0149 | CentroidDist=0.8693
+Epoch 10/20 | Hybrid Train Total: 2.7273 (Recon=1.7215, Contrast=0.6684) | Hybrid Val Total: 2.7357 (Recon=1.7273, Contrast=0.6702) | TF Train=0.0314 | TF Val=0.0316 | Probe AUROC=0.7003 | Silhouette=0.0063 | CentroidDist=0.9628
+Epoch 11/20 | Hybrid Train Total: 2.6385 (Recon=1.6928, Contrast=0.6284) | Hybrid Val Total: 2.6978 (Recon=1.7067, Contrast=0.6586) | TF Train=0.0316 | TF Val=0.0323 | Probe AUROC=0.7001 | Silhouette=0.0048 | CentroidDist=1.0221
+Epoch 12/20 | Hybrid Train Total: 2.5604 (Recon=1.6619, Contrast=0.5969) | Hybrid Val Total: 2.5895 (Recon=1.6718, Contrast=0.6097) | TF Train=0.0318 | TF Val=0.0319 | Probe AUROC=0.7027 | Silhouette=0.0059 | CentroidDist=1.1276
+Epoch 13/20 | Hybrid Train Total: 2.4788 (Recon=1.6384, Contrast=0.5581) | Hybrid Val Total: 2.5291 (Recon=1.6467, Contrast=0.5862) | TF Train=0.0318 | TF Val=0.0319 | Probe AUROC=0.7073 | Silhouette=0.0052 | CentroidDist=1.2359
+Epoch 14/20 | Hybrid Train Total: 2.4322 (Recon=1.6110, Contrast=0.5454) | Hybrid Val Total: 2.4928 (Recon=1.6229, Contrast=0.5778) | TF Train=0.0319 | TF Val=0.0321 | Probe AUROC=0.7035 | Silhouette=0.0078 | CentroidDist=1.3617
+Epoch 15/20 | Hybrid Train Total: 2.3609 (Recon=1.5852, Contrast=0.5151) | Hybrid Val Total: 2.4375 (Recon=1.6061, Contrast=0.5521) | TF Train=0.0319 | TF Val=0.0321 | Probe AUROC=0.7070 | Silhouette=0.0108 | CentroidDist=1.4967
+Epoch 16/20 | Hybrid Train Total: 2.3240 (Recon=1.5685, Contrast=0.5016) | Hybrid Val Total: 2.3896 (Recon=1.5955, Contrast=0.5273) | TF Train=0.0319 | TF Val=0.0317 | Probe AUROC=0.7046 | Silhouette=0.0097 | CentroidDist=1.6160
+Epoch 17/20 | Hybrid Train Total: 2.2771 (Recon=1.5434, Contrast=0.4870) | Hybrid Val Total: 2.3360 (Recon=1.5689, Contrast=0.5093) | TF Train=0.0319 | TF Val=0.0318 | Probe AUROC=0.6998 | Silhouette=0.0106 | CentroidDist=1.7670
+Epoch 18/20 | Hybrid Train Total: 2.2531 (Recon=1.5294, Contrast=0.4803) | Hybrid Val Total: 2.2926 (Recon=1.5512, Contrast=0.4922) | TF Train=0.0317 | TF Val=0.0319 | Probe AUROC=0.7022 | Silhouette=0.0135 | CentroidDist=1.8764
+Epoch 19/20 | Hybrid Train Total: 2.2028 (Recon=1.5090, Contrast=0.4604) | Hybrid Val Total: 2.2634 (Recon=1.5386, Contrast=0.4810) | TF Train=0.0318 | TF Val=0.0319 | Probe AUROC=0.7041 | Silhouette=0.0124 | CentroidDist=1.8601
+Epoch 20/20 | Hybrid Train Total: 2.1625 (Recon=1.4839, Contrast=0.4503) | Hybrid Val Total: 2.2271 (Recon=1.5125, Contrast=0.4742) | TF Train=0.0317 | TF Val=0.0316 | Probe AUROC=0.7025 | Silhouette=0.0126 | CentroidDist=1.9444
+Final train loss: 2.1625
+Final val loss: 2.2271
+Best val loss: 2.2271 at epoch 20 | Early stopped: False
+
+Q3.1.2: Training linear probe on frozen encoder...
+Test AUROC: 0.8125
+Test AUPRC: 0.4050
+Embedding Silhouette: 0.0141
+Embedding Centroid Distance: 2.3402
+Collapse metrics: std_mean=0.646843, std_min=0.382325, active_dims=64, effective_rank=18.20, mean_abs_cosine_offdiag=0.4451
+Per-epoch representation monitoring:
+  epoch=1: probe_auroc=0.6675, silhouette=0.0106, centroid_distance=0.1461
+  epoch=2: probe_auroc=0.6864, silhouette=0.0129, centroid_distance=0.2459
+  epoch=3: probe_auroc=0.6848, silhouette=0.0155, centroid_distance=0.3420
+  epoch=4: probe_auroc=0.6904, silhouette=0.0162, centroid_distance=0.4738
+  epoch=5: probe_auroc=0.6878, silhouette=0.0197, centroid_distance=0.5593
+  epoch=6: probe_auroc=0.6907, silhouette=0.0163, centroid_distance=0.6307
+  epoch=7: probe_auroc=0.6891, silhouette=0.0188, centroid_distance=0.7197
+  epoch=8: probe_auroc=0.6867, silhouette=0.0175, centroid_distance=0.7847
+  epoch=9: probe_auroc=0.6987, silhouette=0.0149, centroid_distance=0.8693
+  epoch=10: probe_auroc=0.7003, silhouette=0.0063, centroid_distance=0.9628
+  epoch=11: probe_auroc=0.7001, silhouette=0.0048, centroid_distance=1.0221
+  epoch=12: probe_auroc=0.7027, silhouette=0.0059, centroid_distance=1.1276
+  epoch=13: probe_auroc=0.7073, silhouette=0.0052, centroid_distance=1.2359
+  epoch=14: probe_auroc=0.7035, silhouette=0.0078, centroid_distance=1.3617
+  epoch=15: probe_auroc=0.7070, silhouette=0.0108, centroid_distance=1.4967
+  epoch=16: probe_auroc=0.7046, silhouette=0.0097, centroid_distance=1.6160
+  epoch=17: probe_auroc=0.6998, silhouette=0.0106, centroid_distance=1.7670
+  epoch=18: probe_auroc=0.7022, silhouette=0.0135, centroid_distance=1.8764
+  epoch=19: probe_auroc=0.7041, silhouette=0.0124, centroid_distance=1.8601
+  epoch=20: probe_auroc=0.7025, silhouette=0.0126, centroid_distance=1.9444
+
+======================================================================
+Q3.2: LABEL SCARCITY EXPERIMENTS
+======================================================================
+
+Train size: 100
+  Supervised (RF): AUROC=0.6875, AUPRC=0.2479
+  Pretrained+Probe: AUROC=0.6923, AUPRC=0.2557
+
+Train size: 500
+  Supervised (RF): AUROC=0.7053, AUPRC=0.2587
+  Pretrained+Probe: AUROC=0.7633, AUPRC=0.3576
+
+Train size: 1000
+  Supervised (RF): AUROC=0.7441, AUPRC=0.2990
+  Pretrained+Probe: AUROC=0.8064, AUPRC=0.3940
+
+======================================================================
+Q3.3: VISUALIZING LEARNED REPRESENTATIONS
+======================================================================
+Computing t-SNE (perplexity=20)...
+Computing t-SNE (perplexity=30)...
+Computing t-SNE (perplexity=40)...
+Computing t-SNE (perplexity=50)...
+Saved t-SNE plot to embeddings/best_hybrid_run/tsne_embeddings.png
+Computing UMAP (n_neighbors=10, min_dist=0.05)...
+Computing UMAP (n_neighbors=10, min_dist=0.1)...
+Computing UMAP (n_neighbors=10, min_dist=0.25)...
+Computing UMAP (n_neighbors=15, min_dist=0.05)...
+Computing UMAP (n_neighbors=15, min_dist=0.1)...
+Computing UMAP (n_neighbors=15, min_dist=0.25)...
+Computing UMAP (n_neighbors=30, min_dist=0.05)...
+Computing UMAP (n_neighbors=30, min_dist=0.1)...
+Computing UMAP (n_neighbors=30, min_dist=0.25)...
+Computing UMAP (n_neighbors=50, min_dist=0.05)...
+Computing UMAP (n_neighbors=50, min_dist=0.1)...
+Computing UMAP (n_neighbors=50, min_dist=0.25)...
+Saved UMAP plot to embeddings/best_hybrid_run/umap_embeddings.png
+Saved projection tuning summary to embeddings/best_hybrid_run/projection_tuning.json
+
+Q3.3.2: Clustering Metrics
+Silhouette Score: 0.0141
+Davies-Bouldin Index: 4.2484
+Class Separation Metrics:
+  intra_class_dist_label_0: 5.2139
+  intra_class_dist_label_1: 4.7283
+  inter_class_distance: 2.3402
+
+======================================================================
+SUMMARY
+======================================================================
+Q3.1 SSL method: hybrid
+Q3.1 Pretrained Linear Probe Test AUROC: 0.8125
+Q3.1 Pretrained Linear Probe Test AUPRC: 0.4050
+Q3.1 Embedding Silhouette: 0.0141
+Q3.1 Embedding Centroid Distance: 2.3402
+
+Q3.2 Label Scarcity Results:
+  n=100: Supervised AUROC=0.6875, Pretrained AUROC=0.6923
+  n=500: Supervised AUROC=0.7053, Pretrained AUROC=0.7633
+  n=1000: Supervised AUROC=0.7441, Pretrained AUROC=0.8064
+
+Q3.3 Clustering Metrics:
+  Silhouette: 0.0141
+  Davies-Bouldin: 4.2484

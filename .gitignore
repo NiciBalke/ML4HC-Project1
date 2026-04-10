@@ -6,3 +6,5 @@ processedOutcomes-a.txt
 full_df.csv/
 processedDataProxy_imputed.parquet/
 parquet_files/
+wandb/
+ml4h_data/
