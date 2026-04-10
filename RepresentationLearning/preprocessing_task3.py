@@ -36,7 +36,7 @@ for file in tqdm(os.listdir(pathToData)):
 full_df = pd.concat(all_data, ignore_index=True)
 full_df = full_df.merge(outcomes_df, left_on="PatientID", right_on="RecordID", how="left")
 
-# Drop ICUType here as requested for task3 preprocessing
+# Drop ICUType here as requested for RepresentationLearning preprocessing
 if "ICUType" in full_df.columns:
     full_df = full_df.drop(columns=["ICUType"])
 
@@ -48,5 +48,5 @@ if os.path.exists(output_path):
     else:
         os.remove(output_path)
 
-# NOTE: Imputation and scaling are applied in task3/auto_encoder_base.py
+# NOTE: Imputation and scaling are applied in RepresentationLearning/auto_encoder_base.py
 full_df.to_parquet(output_path, engine="pyarrow", index=False)

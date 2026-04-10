@@ -8,3 +8,4 @@ processedDataProxy_imputed.parquet/
 parquet_files/
 wandb/
 ml4h_data/
+RepresentationLearning/logs/

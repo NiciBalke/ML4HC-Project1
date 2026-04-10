@@ -1,4 +1,4 @@
-program: task3/auto_encoder_base.py
+program: RepresentationLearning/auto_encoder_base.py
 method: bayes
 metric:
   name: summary/test_auroc
