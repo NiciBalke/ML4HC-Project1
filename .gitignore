@@ -1,3 +1,5 @@
 .venv/
 physionet.org/
 processedDataProxy.parquet/
+Outcomes-a.txt
+processedOutcomes-a.txt
