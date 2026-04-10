@@ -1,69 +1,52 @@
-import pandas as pd
 import os
-from tqdm import tqdm
 import shutil
 
+import pandas as pd
+from tqdm import tqdm
+
 pathToData = "ml4h_data/p1/set-a"
-output_path = "ml4h_data/p1/Outcomes-a.txt" # Assuming outcomes are here
+outcome_path = "ml4h_data/p1/Outcomes-a.txt"
 
-        all_data:list = []
+all_data = []
 
-        # Load the outcomes first so we can merge them later
-        outcomes_df:pd.DataFrame= pd.read_csv(outcome_path)
-        # Keep only the ID and our target label
-        outcomes_df = outcomes_df[['RecordID', 'In-hospital_death']] #filter it to only two columns
-        file:str
-        for file in tqdm(os.listdir(pathToData)): #os.listdir(pathToData) looks pathToData's directory and takes a list of all filenames in there, then tqdm is for progress bar
-            filepath:str = os.path.join(pathToData, file) #the entire filetext
+# Load outcomes and keep target label only
+outcomes_df = pd.read_csv(outcome_path)
+outcomes_df = outcomes_df[["RecordID", "In-hospital_death"]]
 
-            if not filepath.endswith(".txt"): 
-                continue
-                
-            # Extract the actual RecordID from the filename (e.g., "132539.txt" -> 132539)
-            record_id = int(file.replace(".txt", "")) #file is a string and we take the txt away
+for file in tqdm(os.listdir(pathToData)):
+    filepath = os.path.join(pathToData, file)
+    if not filepath.endswith(".txt"):
+        continue
 
-            dataframe:pd.DataFrame = pd.read_csv(filepath) #we read for each patient the file in a separate dataframe
+    record_id = int(file.replace(".txt", ""))
+    dataframe = pd.read_csv(filepath)
 
-            # Round time UP to preserve causality
-            dataframe["Time"] = dataframe["Time"].apply(lambda x: int(x[:2]) if (x[3:] == "00") else (1 + int(x[:2])))
-            
-            # Pivot the table
-            wide_dataframe = dataframe.pivot_table(index="Time", columns="Parameter", values="Value")
-            
-            # Reindex to 49 steps (0 to 48 inclusive)
-            wide_dataframe = wide_dataframe.reindex(range(49))
-            if(imputed):
-                wide_dataframe = wide_dataframe.ffill()
-                wide_dataframe = wide_dataframe.fillna(-1)
-            
-            # Add PatientID using the actual record_id
-            wide_dataframe["PatientID"] = record_id
-            
-            # Reset index so 'Time' becomes a normal column instead of the index
-            wide_dataframe = wide_dataframe.reset_index()
-            
-            all_data.append(wide_dataframe)
+    # Round time UP to preserve causality
+    dataframe["Time"] = dataframe["Time"].apply(
+        lambda x: int(x[:2]) if (x[3:] == "00") else (1 + int(x[:2]))
+    )
 
-        # Concatenate all patient dataframes
-        full_df = pd.concat(all_data, ignore_index=True)
+    # Pivot to wide format, keep 49 time steps (0..48)
+    wide_dataframe = dataframe.pivot_table(index="Time", columns="Parameter", values="Value")
+    wide_dataframe = wide_dataframe.reindex(range(49))
+    wide_dataframe["PatientID"] = record_id
+    wide_dataframe = wide_dataframe.reset_index()
+    all_data.append(wide_dataframe)
 
+full_df = pd.concat(all_data, ignore_index=True)
+full_df = full_df.merge(outcomes_df, left_on="PatientID", right_on="RecordID", how="left")
 
-        # Merge the outcomes based on the RecordID
-        # This will attach the 'In-hospital_death' column to every row for a given patient
-        full_df = full_df.merge(outcomes_df, left_on='PatientID', right_on='RecordID', how='left')
-        if(imputed):
-            full_df=full_df.fillna(-1)
+# Drop ICUType here as requested for task3 preprocessing
+if "ICUType" in full_df.columns:
+    full_df = full_df.drop(columns=["ICUType"])
 
+output_path = "processedDataProxy.parquet"
+print(full_df.head())
+if os.path.exists(output_path):
+    if os.path.isdir(output_path):
+        shutil.rmtree(output_path)
+    else:
+        os.remove(output_path)
 
-        print(full_df.head())
-        if os.path.exists(output_path):
-            if os.path.isdir(output_path):
-                shutil.rmtree(output_path)  # Delete if it's a folder
-            else:
-                os.remove(output_path)      # Delete if it's a file
-
-# Save to parquet
-# NOTE: Imputation (forward fill) and scaling are applied in auto_encoder_base.py,
-# not here. This keeps preprocessing modular and allows scaling to be fit only on
-# the training set.
-full_df.to_parquet("processedDataProxy.parquet", engine="pyarrow", index=False)
+# NOTE: Imputation and scaling are applied in task3/auto_encoder_base.py
+full_df.to_parquet(output_path, engine="pyarrow", index=False)
