@@ -57,6 +57,7 @@ Run any of logistic_regression.py/ridge_regression.py/svm.py/random_forest.py al
 Run chronos_embed.py to generate embeddings
 then again run any of the linear probes above
 
+Run attention_probe.py to run the neural network on the chronos embeddings.
 
 
 
