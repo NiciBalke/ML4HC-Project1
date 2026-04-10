@@ -4,3 +4,8 @@ processedDataProxy.parquet/
 full_df.csv/
 processedDataProxy_imputed.parquet/
 parquet_files/
+*.parquet
+wandb/
+logs/
+ml4h_data/
+.DS_Store

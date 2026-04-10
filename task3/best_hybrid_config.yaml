@@ -1,0 +1,28 @@
+# Best hybrid config from logs/ + local wandb summaries
+# run_id: jaefridx
+# metric: summary/test_auroc = 0.805685787828645
+# summary/test_auprc = 0.35143410936675
+
+ssl_method: hybrid
+batch_size: 32
+contrastive_weight: 1.5
+d_model: 64
+drop_ratio: 0.1
+hard_negative_k: 5
+layers: 2
+lr: 0.001
+mask_ratio: 0.1
+max_seq_len: 512
+monitor_every: 1
+multiscale_ratios: [1.0, 0.9]
+nhead: 4
+pretrain_epochs: 20
+reconstruction_weight: 1.0
+seed: 42
+temperature: 0.2
+time_freq_weight: 0.1
+value_bins: 10
+
+early_stop_patience: 5
+early_stop_min_delta: 0.0001
+restore_best_weights: true

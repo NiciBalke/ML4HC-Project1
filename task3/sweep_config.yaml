@@ -1,0 +1,70 @@
+program: task3/auto_encoder_base.py
+method: bayes
+metric:
+  name: summary/test_auroc
+  goal: maximize
+parameters:
+  # Core training
+  pretrain_epochs:
+    values: [20, 30, 50]
+  ssl_method:
+    values: ["autoencoder", "contrastive", "hybrid"]
+  batch_size:
+    values: [8, 16, 32]
+  lr:
+    values: [5e-4, 1e-3, 2e-3, 5e-3]
+  
+  # Model architecture
+  d_model:
+    values: [64, 128]
+  nhead:
+    values: [2, 4]
+  layers:
+    values: [1, 2, 3]
+  
+  # Denoising augmentation (autoencoder / hybrid)
+  mask_ratio:
+    values: [0.1, 0.2, 0.3]
+  drop_ratio:
+    values: [0.05, 0.1]
+  
+  # Contrastive learning (contrastive / hybrid)
+  temperature:
+    values: [0.05, 0.1, 0.2]
+  reconstruction_weight:
+    values: [0.5, 1.0, 1.5, 2.0]
+  contrastive_weight:
+    values: [0.5, 1.0, 1.5]
+  
+  # Multi-scale crops (TS2Vec style)
+  multiscale_ratios:
+    values:
+      - [1.0]
+      - [1.0, 0.9]
+      - [1.0, 0.8]
+  
+  # Hard negative mining
+  hard_negative_k:
+    values: [1, 3, 5]
+  
+  # Time-frequency consistency
+  time_freq_weight:
+    values: [0.0, 0.05, 0.1, 0.2]
+  
+  # Monitoring / visualization
+  monitor_every:
+    value: 1
+  seed:
+    value: 42
+  
+  # Data parameters
+  max_seq_len:
+    value: 512
+  value_bins:
+    value: 10
+
+early_terminate:
+  type: hyperband
+  min_iter: 2
+  max_iter: 15
+  eta: 2

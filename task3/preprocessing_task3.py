@@ -3,15 +3,8 @@ import os
 from tqdm import tqdm
 import shutil
 
-for set in ["a", "b", "c"]:  
-    for imputstr in ["imputed", "not-imputed"]:
-        which_dataset:str = set # which physionet set to use
-        imputeds:str = imputstr
-        imputed: bool = (imputeds == "imputed")
-        output_path:str = f"parquet_files/processedDataProxy-{which_dataset}-{imputeds}.parquet"
-
-        pathToData :str= f"physionet.org/files/challenge-2012/1.0.0/set-{which_dataset}" #containin 4000 patient files
-        outcome_path:str = f"physionet.org/files/challenge-2012/1.0.0/Outcomes-{which_dataset}.txt" # Assuming outcomes are here
+pathToData = "ml4h_data/p1/set-a"
+output_path = "ml4h_data/p1/Outcomes-a.txt" # Assuming outcomes are here
 
         all_data:list = []
 
@@ -69,5 +62,8 @@ for set in ["a", "b", "c"]:
             else:
                 os.remove(output_path)      # Delete if it's a file
 
-        # Save to parquet
-        full_df.to_parquet(output_path, engine="pyarrow", index=False)
+# Save to parquet
+# NOTE: Imputation (forward fill) and scaling are applied in auto_encoder_base.py,
+# not here. This keeps preprocessing modular and allows scaling to be fit only on
+# the training set.
+full_df.to_parquet("processedDataProxy.parquet", engine="pyarrow", index=False)

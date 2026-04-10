@@ -1,0 +1,30 @@
+# Best hyperparameters found from sweep logs in logs/ (run: vdxw2q1w)
+# Sweep objective: summary/test_auroc (maximize)
+# Best observed metrics:
+#   summary/test_auroc: 0.8217503217503217
+#   summary/test_auprc: 0.4613578535398565
+
+batch_size: 32
+contrastive_weight: 1.5
+d_model: 128
+drop_ratio: 0.1
+hard_negative_k: 5
+layers: 1
+lr: 0.002
+mask_ratio: 0.3
+max_seq_len: 512
+monitor_every: 1
+multiscale_ratios: [1.0, 0.8]
+nhead: 2
+pretrain_epochs: 20
+reconstruction_weight: 0.5
+seed: 42
+ssl_method: autoencoder
+temperature: 0.1
+time_freq_weight: 0.1
+value_bins: 10
+
+# Current training defaults not part of sweep search space
+early_stop_patience: 5
+early_stop_min_delta: 0.0001
+restore_best_weights: true
