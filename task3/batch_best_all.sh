@@ -6,7 +6,7 @@ set -euo pipefail
 
 cd "${SLURM_SUBMIT_DIR:-$PWD}"
 
-jid_auto=$(sbatch task3/batch_best.sh | awk '{print $4}')
+jid_auto=$(sbatch task3/batch_best_auto.sh | awk '{print $4}')
 jid_contrastive=$(sbatch task3/batch_best_contrastive.sh | awk '{print $4}')
 jid_hybrid=$(sbatch task3/batch_best_hybrid.sh | awk '{print $4}')
 

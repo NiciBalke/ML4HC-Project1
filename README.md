@@ -24,3 +24,16 @@ run LSTM_clean.py with Transformer model
 
 ### Q2.3b: Tokenizing Time-Series Data and Transformers (4 Pts)
 run RePreprocessingData.ipynb
+
+## 3. Representation Learning
+The code for all of task 3 is contained in the file auto_encoder_base.py
+To run the best model for each of the model types on a cluster, use the batch files:
+ - batch_best_auto.sh
+ - batch_best_constrastive.sh
+ - batch_best_hybrid.sh
+To run all three of these use:
+ - batch_best_all.sh
+To run a wandb sweep, set the API Key and run using:
+ - export WANDB_API_KEY=
+ - batch_sweep.sh
+The yaml files contain the best hyperparameters for each of the models found during exploration. Plots for visualizations will be saved under embeddings/ and logs will be produced in logs/.
