@@ -42,18 +42,18 @@ To run a wandb sweep, set the API Key and run using:
 The yaml files contain the best hyperparameters for each of the models found during exploration. Plots for visualizations will be saved under embeddings/ and logs will be produced in logs/.
 
 ## 4. Foundation Models
-###Q4.1
+### Q4.1
 Run llama_predict.py
 predict_mode = 0 only runs score computation and uses a prediction.txt file which has to be present
 
 in predict_mode = 1 && embed_mode = 0: llama is used to make predictions.
 in predict_mode = 1 && embed_mode = 1: embeddings are extracted from llama and saved.
 
-###Q4.2
+### Q4.2
 multiple linear_probes are available (logistic regression was the best)
 Run any of logistic_regression.py/ridge_regression.py/svm.py/random_forest.py all of them require files with embeddings to be present in the embeddings folder
 
-###Q4.3
+### Q4.3
 Run chronos_embed.py to generate embeddings
 then again run any of the linear probes above
 
