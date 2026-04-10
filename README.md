@@ -31,9 +31,12 @@ To run the best model for each of the model types on a cluster, use the batch fi
  - batch_best_auto.sh
  - batch_best_constrastive.sh
  - batch_best_hybrid.sh
+ 
 To run all three of these use:
  - batch_best_all.sh
+
 To run a wandb sweep, set the API Key and run using:
  - export WANDB_API_KEY=
- - batch_sweep.sh
+ - batch_sweep.sh 
+
 The yaml files contain the best hyperparameters for each of the models found during exploration. Plots for visualizations will be saved under embeddings/ and logs will be produced in logs/.
