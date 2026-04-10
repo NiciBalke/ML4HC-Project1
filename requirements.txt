@@ -3,6 +3,7 @@ pandas
 numpy
 scikit-learn
 chronos
+chronos-forecasting
 re
 sklearn.metrics
 ollama
@@ -16,9 +17,6 @@ sklearn.model_selection
 einops
 shutil
 math
-pandas
-numpy
-torch
 matplotlib
 scikit-learn
 umap-learn
@@ -26,3 +24,5 @@ PyYAML
 pyarrow
 wandb
 weave
+datetime
+torch.utils.data
