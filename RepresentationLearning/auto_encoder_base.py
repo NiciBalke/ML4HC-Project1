@@ -1695,7 +1695,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--umap-neighbors", type=int, nargs="+", default=[10, 15, 30, 50])
     parser.add_argument("--umap-min-dist", type=float, nargs="+", default=[0.05, 0.1, 0.25])
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--output-dir", type=str, default="task3/embeddings")
+    parser.add_argument("--output-dir", type=str, default="RepresentationLearning/embeddings")
     parser.add_argument("--lr", type=float, default=1e-3)
 
     # Weights & Biases tracking / sweeps
@@ -2092,6 +2092,10 @@ def _run_pipeline(args: argparse.Namespace) -> Dict:
 
     # Q3.2: Label scarcity
     q32_results = q32_label_scarcity(cohort, train_idx, test_idx, model, device, args)
+    os.makedirs(args.output_dir, exist_ok=True)
+    scarcity_csv = os.path.join(args.output_dir, "label_scarcity_pretrained_probe.csv")
+    pd.DataFrame(q32_results["label_scarcity_results"]).to_csv(scarcity_csv, index=False)
+    print(f"Saved Q3.2 label scarcity results to: {scarcity_csv}")
 
     # Q3.3: Visualization and metrics
     q33_results = q33_visualize_and_metrics(
@@ -2116,8 +2120,8 @@ def _run_pipeline(args: argparse.Namespace) -> Dict:
     for res in q32_results["label_scarcity_results"]:
         print(
             f"  n={res['train_size']}: "
-            f"Supervised AUROC={res['supervised_auroc']:.4f}, "
-            f"Pretrained AUROC={res['pretrained_probe_auroc']:.4f}"
+            f"Supervised AUROC={res['supervised_auroc']:.4f}, AUPRC={res['supervised_auprc']:.4f}, "
+            f"Pretrained AUROC={res['pretrained_probe_auroc']:.4f}, AUPRC={res['pretrained_probe_auprc']:.4f}"
         )
     print(f"\nQ3.3 Clustering Metrics:")
     print(f"  Silhouette: {q33_results['silhouette_score']:.4f}")
@@ -2140,7 +2144,9 @@ def _run_pipeline(args: argparse.Namespace) -> Dict:
     for res in q32_results["label_scarcity_results"]:
         n = res["train_size"]
         summary[f"summary/scarcity_{n}_supervised_auroc"] = res["supervised_auroc"]
+        summary[f"summary/scarcity_{n}_supervised_auprc"] = res["supervised_auprc"]
         summary[f"summary/scarcity_{n}_pretrained_auroc"] = res["pretrained_probe_auroc"]
+        summary[f"summary/scarcity_{n}_pretrained_auprc"] = res["pretrained_probe_auprc"]
 
     return {
         "q31": q31_results,

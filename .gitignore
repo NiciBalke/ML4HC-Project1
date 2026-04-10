@@ -11,3 +11,6 @@ wandb/
 logs/
 ml4h_data/
 .DS_Store
+wandb/
+ml4h_data/
+RepresentationLearning/logs/

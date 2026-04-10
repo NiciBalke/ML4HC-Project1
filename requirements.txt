@@ -8,17 +8,10 @@ re
 sklearn.metrics
 ollama
 tqdm
-numpy
-os 
-csv
-sklearn.linear_model
-sklearn.preprocessing
-sklearn.model_selection
 einops
 shutil
 math
 matplotlib
-scikit-learn
 umap-learn
 PyYAML
 pyarrow

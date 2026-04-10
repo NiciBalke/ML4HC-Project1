@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #SBATCH --partition=jobs
 #SBATCH --account=ml4h
-#SBATCH --job-name=ml4h-best-hybrid
-#SBATCH --output=task3/logs/%x-%j.out
-#SBATCH --error=task3/logs/%x-%j.err
+#SBATCH --job-name=ml4h-best
+#SBATCH --output=RepresentationLearning/logs/%x-%j.out
+#SBATCH --error=RepresentationLearning/logs/%x-%j.err
 #SBATCH --time=24:00:00
 
 set -euo pipefail
@@ -15,7 +15,7 @@ export CUBLAS_WORKSPACE_CONFIG=:4096:8
 # Always run from the project root (directory where sbatch was called)
 cd "${SLURM_SUBMIT_DIR:-$PWD}"
 
-mkdir -p task3/logs
+mkdir -p RepresentationLearning/logs
 
 # Create / activate local virtual environment
 if [[ ! -d ".venv" ]]; then
@@ -36,7 +36,7 @@ fi
 # Build parquet once if missing
 if [[ ! -f "processedDataProxy.parquet" ]]; then
   echo "processedDataProxy.parquet not found -> running preprocessing"
-  python task3/preprocessing_task3.py
+  python RepresentationLearning/preprocessing_task3.py
 fi
 
 # Optional W&B tracking (disabled by default)
@@ -44,25 +44,25 @@ USE_WANDB="${USE_WANDB:-0}"
 WANDB_PROJECT="${WANDB_PROJECT:-ml4h_project}"
 WANDB_ENTITY="${WANDB_ENTITY:-finn-brunke}"
 
-OUTPUT_DIR="${OUTPUT_DIR:-task3/embeddings/best_hybrid_run}"
+OUTPUT_DIR="${OUTPUT_DIR:-RepresentationLearning/embeddings/best_autoencoder_run}"
 mkdir -p "$OUTPUT_DIR"
 
 CMD=(
-  python task3/auto_encoder_base.py
+  python RepresentationLearning/auto_encoder_base.py
   --parquet processedDataProxy.parquet
   --batch-size 32
-  --d-model 64
-  --nhead 4
-  --layers 2
+  --d-model 128
+  --nhead 2
+  --layers 1
   --pretrain-epochs 20
-  --ssl-method hybrid
-  --lr 0.001
-  --mask-ratio 0.1
+  --ssl-method autoencoder
+  --lr 0.002
+  --mask-ratio 0.3
   --drop-ratio 0.1
-  --temperature 0.2
-  --reconstruction-weight 1.0
+  --temperature 0.1
+  --reconstruction-weight 0.5
   --contrastive-weight 1.5
-  --multiscale-ratios 1.0 0.9
+  --multiscale-ratios 1.0 0.8
   --hard-negative-k 5
   --time-freq-weight 0.1
   --monitor-every 1
@@ -86,5 +86,5 @@ if [[ "$USE_WANDB" == "1" ]]; then
   fi
 fi
 
-echo "Launching best-hybrid run: ${CMD[*]}"
+echo "Launching best-config run: ${CMD[*]}"
 "${CMD[@]}"
