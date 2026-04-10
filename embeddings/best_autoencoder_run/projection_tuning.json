@@ -1,0 +1,11 @@
+{
+  "tsne": {
+    "best_perplexity": 40,
+    "best_silhouette": -0.007718222681432962
+  },
+  "umap": {
+    "best_n_neighbors": 50,
+    "best_min_dist": 0.05,
+    "best_silhouette": 0.03115694597363472
+  }
+}

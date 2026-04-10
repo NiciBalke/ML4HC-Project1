@@ -3,3 +3,6 @@ physionet.org/
 processedDataProxy.parquet/
 full_df.csv/
 *.parquet
+wandb/
+logs/
+ml4h_data/

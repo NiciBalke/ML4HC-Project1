@@ -1,66 +1,66 @@
 program: task3/auto_encoder_base.py
 method: bayes
 metric:
-  name: q31_test_auroc
+  name: summary/test_auroc
   goal: maximize
 parameters:
   # Core training
-  pretrain-epochs:
-    values: [5, 10, 15]
-  ssl-method:
+  pretrain_epochs:
+    values: [20, 30, 50]
+  ssl_method:
     values: ["autoencoder", "contrastive", "hybrid"]
-  batch-size:
-    values: [32, 64, 128]
+  batch_size:
+    values: [8, 16, 32]
   lr:
-    values: [1e-4, 1e-3, 5e-3]
+    values: [5e-4, 1e-3, 2e-3, 5e-3]
   
   # Model architecture
-  d-model:
-    values: [64, 128, 256]
+  d_model:
+    values: [64, 128]
   nhead:
-    values: [2, 4, 8]
+    values: [2, 4]
   layers:
     values: [1, 2, 3]
   
   # Denoising augmentation (autoencoder / hybrid)
-  mask-ratio:
+  mask_ratio:
     values: [0.1, 0.2, 0.3]
-  drop-ratio:
-    values: [0.05, 0.1, 0.2]
+  drop_ratio:
+    values: [0.05, 0.1]
   
   # Contrastive learning (contrastive / hybrid)
   temperature:
     values: [0.05, 0.1, 0.2]
-  reconstruction-weight:
-    values: [0.5, 1.0, 2.0]
-  contrastive-weight:
-    values: [0.5, 1.0, 2.0]
+  reconstruction_weight:
+    values: [0.5, 1.0, 1.5, 2.0]
+  contrastive_weight:
+    values: [0.5, 1.0, 1.5]
   
   # Multi-scale crops (TS2Vec style)
-  multiscale-ratios:
+  multiscale_ratios:
     values:
-      - [1.0, 0.75, 0.5]
-      - [1.0, 0.8, 0.6]
-      - [1.0, 0.9, 0.7]
+      - [1.0]
+      - [1.0, 0.9]
+      - [1.0, 0.8]
   
   # Hard negative mining
-  hard-negative-k:
-    values: [1, 5, 10]
+  hard_negative_k:
+    values: [1, 3, 5]
   
   # Time-frequency consistency
-  time-freq-weight:
+  time_freq_weight:
     values: [0.0, 0.05, 0.1, 0.2]
   
   # Monitoring / visualization
-  monitor-every:
+  monitor_every:
     value: 1
   seed:
     value: 42
   
   # Data parameters
-  max-seq-len:
-    value: 1024
-  value-bins:
+  max_seq_len:
+    value: 512
+  value_bins:
     value: 10
 
 early_terminate:

@@ -9,12 +9,17 @@ Q3.3 - Visualization: t-SNE/UMAP visualization and clustering metrics
 import argparse
 import json
 import os
+import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+
+# Make CUDA GEMM deterministic when CUDA is available.
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -56,6 +61,23 @@ PAD_TOKEN = "[PAD]"
 UNK_TOKEN = "[UNK]"
 BOS_TOKEN = "[BOS]"
 EOS_TOKEN = "[EOS]"
+
+
+def _set_global_reproducibility(seed: int) -> None:
+    """Set global RNG seeds and deterministic backend flags."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+    if hasattr(torch.backends, "cudnn"):
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+    # Enforce deterministic algorithms where available.
+    torch.use_deterministic_algorithms(True)
 
 
 @dataclass
@@ -242,6 +264,66 @@ class RepresentationMonitoringMixin:
     """Utilities to monitor embedding quality during pretraining."""
 
     @staticmethod
+    def _collapse_metrics(embeddings: np.ndarray, active_dim_threshold: float = 1e-3) -> Dict[str, float]:
+        if embeddings is None or embeddings.size == 0:
+            return {
+                "feature_std_mean": float("nan"),
+                "feature_std_min": float("nan"),
+                "active_dims": float("nan"),
+                "effective_rank": float("nan"),
+                "mean_abs_cosine_offdiag": float("nan"),
+            }
+
+        emb = np.asarray(embeddings, dtype=np.float64)
+        if emb.ndim != 2 or emb.shape[0] == 0 or emb.shape[1] == 0:
+            return {
+                "feature_std_mean": float("nan"),
+                "feature_std_min": float("nan"),
+                "active_dims": float("nan"),
+                "effective_rank": float("nan"),
+                "mean_abs_cosine_offdiag": float("nan"),
+            }
+
+        feature_std = emb.std(axis=0)
+        feature_std_mean = float(np.mean(feature_std))
+        feature_std_min = float(np.min(feature_std))
+        active_dims = float(np.sum(feature_std > active_dim_threshold))
+
+        centered = emb - emb.mean(axis=0, keepdims=True)
+        effective_rank = float("nan")
+        try:
+            singular_values = np.linalg.svd(centered, compute_uv=False)
+            s_sum = float(np.sum(singular_values))
+            if s_sum > 0.0:
+                p = singular_values / s_sum
+                p = p[p > 0]
+                entropy = -float(np.sum(p * np.log(p)))
+                effective_rank = float(np.exp(entropy))
+            else:
+                effective_rank = 0.0
+        except Exception:
+            effective_rank = float("nan")
+
+        mean_abs_cosine_offdiag = float("nan")
+        try:
+            norms = np.linalg.norm(emb, axis=1, keepdims=True)
+            normed = emb / np.clip(norms, 1e-12, None)
+            cosine = normed @ normed.T
+            if cosine.shape[0] > 1:
+                offdiag_mask = ~np.eye(cosine.shape[0], dtype=bool)
+                mean_abs_cosine_offdiag = float(np.mean(np.abs(cosine[offdiag_mask])))
+        except Exception:
+            mean_abs_cosine_offdiag = float("nan")
+
+        return {
+            "feature_std_mean": feature_std_mean,
+            "feature_std_min": feature_std_min,
+            "active_dims": active_dims,
+            "effective_rank": effective_rank,
+            "mean_abs_cosine_offdiag": mean_abs_cosine_offdiag,
+        }
+
+    @staticmethod
     def _centroid_distance(embeddings: np.ndarray, labels: np.ndarray) -> float:
         unique = np.unique(labels)
         if len(unique) < 2:
@@ -318,10 +400,20 @@ class RepresentationMonitoringMixin:
                     break
 
         if not emb_list:
-            return {"silhouette": float("nan"), "centroid_distance": float("nan"), "probe_auroc": float("nan")}
+            return {
+                "silhouette": float("nan"),
+                "centroid_distance": float("nan"),
+                "probe_auroc": float("nan"),
+                "feature_std_mean": float("nan"),
+                "feature_std_min": float("nan"),
+                "active_dims": float("nan"),
+                "effective_rank": float("nan"),
+                "mean_abs_cosine_offdiag": float("nan"),
+            }
 
         embeddings = np.concatenate(emb_list, axis=0)[:max_samples]
         labels_np = np.concatenate(lab_list, axis=0)[:max_samples]
+        collapse_metrics = self._collapse_metrics(embeddings)
 
         silhouette_val = float("nan")
         if SKLEARN_AVAILABLE and len(np.unique(labels_np)) > 1:
@@ -336,6 +428,7 @@ class RepresentationMonitoringMixin:
             "silhouette": silhouette_val,
             "centroid_distance": centroid_distance,
             "probe_auroc": probe_auroc,
+            **collapse_metrics,
         }
 
 
@@ -481,6 +574,9 @@ class AutoencoderPretrainer(BaseSSLEncoder, TokenAugmentationMixin, Representati
         mask_ratio: float = 0.2,
         drop_ratio: float = 0.1,
         monitor_every: int = 1,
+        early_stop_patience: int = 0,
+        early_stop_min_delta: float = 0.0,
+        restore_best_weights: bool = True,
     ):
         self.model = model
         self.pad_token_id = pad_token_id
@@ -489,13 +585,21 @@ class AutoencoderPretrainer(BaseSSLEncoder, TokenAugmentationMixin, Representati
         self.mask_ratio = mask_ratio
         self.drop_ratio = drop_ratio
         self.monitor_every = max(1, monitor_every)
+        self.early_stop_patience = max(0, int(early_stop_patience))
+        self.early_stop_min_delta = max(0.0, float(early_stop_min_delta))
+        self.restore_best_weights = bool(restore_best_weights)
         self.train_losses: List[float] = []
         self.val_losses: List[float] = []
         self.rep_monitor: List[Dict[str, float]] = []
+        self.best_val_loss: float = float("inf")
+        self.best_epoch: int = 0
+        self.early_stopped: bool = False
 
     def pretrain(self, train_loader: DataLoader, val_loader: DataLoader, device: torch.device, epochs: int, lr: float):
         optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         criterion = nn.CrossEntropyLoss(ignore_index=self.pad_token_id)
+        epochs_without_improvement = 0
+        best_state = None
 
         for epoch in range(epochs):
             self.model.train()
@@ -559,6 +663,16 @@ class AutoencoderPretrainer(BaseSSLEncoder, TokenAugmentationMixin, Representati
             val_loss /= max(1, len(val_loader))
             self.val_losses.append(val_loss)
 
+            improved = val_loss < (self.best_val_loss - self.early_stop_min_delta)
+            if improved:
+                self.best_val_loss = val_loss
+                self.best_epoch = epoch + 1
+                epochs_without_improvement = 0
+                if self.restore_best_weights:
+                    best_state = {k: v.detach().cpu().clone() for k, v in self.model.state_dict().items()}
+            else:
+                epochs_without_improvement += 1
+
             epoch_msg = f"Epoch {epoch + 1}/{epochs} | Denoise Train Loss: {train_loss:.4f} | Denoise Val Loss: {val_loss:.4f}"
 
             if (epoch + 1) % self.monitor_every == 0:
@@ -573,6 +687,17 @@ class AutoencoderPretrainer(BaseSSLEncoder, TokenAugmentationMixin, Representati
 
             print(epoch_msg)
 
+            if self.early_stop_patience > 0 and epochs_without_improvement >= self.early_stop_patience:
+                self.early_stopped = True
+                print(
+                    f"Early stopping triggered at epoch {epoch + 1}; "
+                    f"best val loss {self.best_val_loss:.4f} at epoch {self.best_epoch}."
+                )
+                break
+
+        if self.restore_best_weights and best_state is not None:
+            self.model.load_state_dict(best_state)
+
     def get_encoder(self) -> nn.Module:
         return self.model
 
@@ -581,6 +706,9 @@ class AutoencoderPretrainer(BaseSSLEncoder, TokenAugmentationMixin, Representati
             "train_losses": self.train_losses,
             "val_losses": self.val_losses,
             "representation_monitor": self.rep_monitor,
+            "best_val_loss": self.best_val_loss,
+            "best_epoch": self.best_epoch,
+            "early_stopped": self.early_stopped,
         }
 
 
@@ -601,6 +729,9 @@ class ContrastivePretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contr
         hard_negative_k: int = 0,
         time_freq_weight: float = 0.0,
         monitor_every: int = 1,
+        early_stop_patience: int = 0,
+        early_stop_min_delta: float = 0.0,
+        restore_best_weights: bool = True,
     ):
         self.model = model
         self.pad_token_id = pad_token_id
@@ -613,14 +744,22 @@ class ContrastivePretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contr
         self.hard_negative_k = max(0, hard_negative_k)
         self.time_freq_weight = max(0.0, time_freq_weight)
         self.monitor_every = max(1, monitor_every)
+        self.early_stop_patience = max(0, int(early_stop_patience))
+        self.early_stop_min_delta = max(0.0, float(early_stop_min_delta))
+        self.restore_best_weights = bool(restore_best_weights)
         self.train_losses: List[float] = []
         self.val_losses: List[float] = []
         self.time_freq_train_losses: List[float] = []
         self.time_freq_val_losses: List[float] = []
         self.rep_monitor: List[Dict[str, float]] = []
+        self.best_val_loss: float = float("inf")
+        self.best_epoch: int = 0
+        self.early_stopped: bool = False
 
     def pretrain(self, train_loader: DataLoader, val_loader: DataLoader, device: torch.device, epochs: int, lr: float):
         optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        epochs_without_improvement = 0
+        best_state = None
 
         for epoch in range(epochs):
             self.model.train()
@@ -659,6 +798,16 @@ class ContrastivePretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contr
             self.val_losses.append(val_loss)
             self.time_freq_val_losses.append(val_tf)
 
+            improved = val_loss < (self.best_val_loss - self.early_stop_min_delta)
+            if improved:
+                self.best_val_loss = val_loss
+                self.best_epoch = epoch + 1
+                epochs_without_improvement = 0
+                if self.restore_best_weights:
+                    best_state = {k: v.detach().cpu().clone() for k, v in self.model.state_dict().items()}
+            else:
+                epochs_without_improvement += 1
+
             epoch_msg = (
                 f"Epoch {epoch + 1}/{epochs} | Contrastive Train Loss: {train_loss:.4f} | Contrastive Val Loss: {val_loss:.4f}"
                 f" | TF Train={train_tf:.4f} | TF Val={val_tf:.4f}"
@@ -674,6 +823,17 @@ class ContrastivePretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contr
                 )
             print(epoch_msg)
 
+            if self.early_stop_patience > 0 and epochs_without_improvement >= self.early_stop_patience:
+                self.early_stopped = True
+                print(
+                    f"Early stopping triggered at epoch {epoch + 1}; "
+                    f"best val loss {self.best_val_loss:.4f} at epoch {self.best_epoch}."
+                )
+                break
+
+        if self.restore_best_weights and best_state is not None:
+            self.model.load_state_dict(best_state)
+
     def get_encoder(self) -> nn.Module:
         return self.model
 
@@ -684,6 +844,9 @@ class ContrastivePretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contr
             "time_freq_train_losses": self.time_freq_train_losses,
             "time_freq_val_losses": self.time_freq_val_losses,
             "representation_monitor": self.rep_monitor,
+            "best_val_loss": self.best_val_loss,
+            "best_epoch": self.best_epoch,
+            "early_stopped": self.early_stopped,
         }
 
 
@@ -706,6 +869,9 @@ class HybridPretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contrastiv
         hard_negative_k: int = 0,
         time_freq_weight: float = 0.0,
         monitor_every: int = 1,
+        early_stop_patience: int = 0,
+        early_stop_min_delta: float = 0.0,
+        restore_best_weights: bool = True,
     ):
         self.model = model
         self.pad_token_id = pad_token_id
@@ -720,6 +886,9 @@ class HybridPretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contrastiv
         self.hard_negative_k = max(0, hard_negative_k)
         self.time_freq_weight = max(0.0, time_freq_weight)
         self.monitor_every = max(1, monitor_every)
+        self.early_stop_patience = max(0, int(early_stop_patience))
+        self.early_stop_min_delta = max(0.0, float(early_stop_min_delta))
+        self.restore_best_weights = bool(restore_best_weights)
 
         self.train_losses: List[float] = []
         self.val_losses: List[float] = []
@@ -730,10 +899,15 @@ class HybridPretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contrastiv
         self.time_freq_train_losses: List[float] = []
         self.time_freq_val_losses: List[float] = []
         self.rep_monitor: List[Dict[str, float]] = []
+        self.best_val_loss: float = float("inf")
+        self.best_epoch: int = 0
+        self.early_stopped: bool = False
 
     def pretrain(self, train_loader: DataLoader, val_loader: DataLoader, device: torch.device, epochs: int, lr: float):
         optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         recon_criterion = nn.CrossEntropyLoss(ignore_index=self.pad_token_id)
+        epochs_without_improvement = 0
+        best_state = None
 
         for epoch in range(epochs):
             self.model.train()
@@ -842,6 +1016,16 @@ class HybridPretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contrastiv
             self.contrast_val_losses.append(contrast_val)
             self.time_freq_val_losses.append(tf_val)
 
+            improved = total_val < (self.best_val_loss - self.early_stop_min_delta)
+            if improved:
+                self.best_val_loss = total_val
+                self.best_epoch = epoch + 1
+                epochs_without_improvement = 0
+                if self.restore_best_weights:
+                    best_state = {k: v.detach().cpu().clone() for k, v in self.model.state_dict().items()}
+            else:
+                epochs_without_improvement += 1
+
             epoch_msg = (
                 f"Epoch {epoch + 1}/{epochs} | Hybrid Train Total: {total_train:.4f} (Recon={recon_train:.4f}, Contrast={contrast_train:.4f})"
                 f" | Hybrid Val Total: {total_val:.4f} (Recon={recon_val:.4f}, Contrast={contrast_val:.4f})"
@@ -860,6 +1044,17 @@ class HybridPretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contrastiv
 
             print(epoch_msg)
 
+            if self.early_stop_patience > 0 and epochs_without_improvement >= self.early_stop_patience:
+                self.early_stopped = True
+                print(
+                    f"Early stopping triggered at epoch {epoch + 1}; "
+                    f"best val loss {self.best_val_loss:.4f} at epoch {self.best_epoch}."
+                )
+                break
+
+        if self.restore_best_weights and best_state is not None:
+            self.model.load_state_dict(best_state)
+
     def get_encoder(self) -> nn.Module:
         return self.model
 
@@ -874,6 +1069,9 @@ class HybridPretrainer(BaseSSLEncoder, RepresentationMonitoringMixin, Contrastiv
             "time_freq_train_losses": self.time_freq_train_losses,
             "time_freq_val_losses": self.time_freq_val_losses,
             "representation_monitor": self.rep_monitor,
+            "best_val_loss": self.best_val_loss,
+            "best_epoch": self.best_epoch,
+            "early_stopped": self.early_stopped,
         }
 
 
@@ -886,21 +1084,30 @@ class LinearProbe:
 
     def __init__(self):
         self.model = None
+        self.scaler = None
 
     def train(self, embeddings: np.ndarray, labels: np.ndarray):
         """Train logistic regression on embeddings."""
         if not SKLEARN_AVAILABLE:
             raise ImportError("scikit-learn required for LogisticRegression")
-        self.model = LogisticRegression(max_iter=1000, random_state=42)
-        self.model.fit(embeddings, labels)
+        self.scaler = StandardScaler()
+        train_emb = self.scaler.fit_transform(embeddings)
+        self.model = LogisticRegression(max_iter=5000, random_state=42, solver="lbfgs")
+        self.model.fit(train_emb, labels)
 
     def predict_proba(self, embeddings: np.ndarray) -> np.ndarray:
         """Get probability predictions."""
-        return self.model.predict_proba(embeddings)[:, 1]
+        if self.scaler is None:
+            raise RuntimeError("LinearProbe must be trained before prediction.")
+        emb = self.scaler.transform(embeddings)
+        return self.model.predict_proba(emb)[:, 1]
 
     def predict(self, embeddings: np.ndarray) -> np.ndarray:
         """Get class predictions."""
-        return self.model.predict(embeddings)
+        if self.scaler is None:
+            raise RuntimeError("LinearProbe must be trained before prediction.")
+        emb = self.scaler.transform(embeddings)
+        return self.model.predict(emb)
 
 
 class RandomForestModel:
@@ -928,10 +1135,17 @@ class RandomForestModel:
 # Metrics & Utilities
 # ============================================================================
 
-def _stratified_split_indices(labels: torch.Tensor, train_frac: float = 0.7, val_frac: float = 0.15, seed: int = 42):
+def _labels_to_numpy(labels: torch.Tensor | np.ndarray) -> np.ndarray:
+    """Convert labels to a NumPy array from torch or NumPy input."""
+    if isinstance(labels, torch.Tensor):
+        return labels.detach().cpu().numpy()
+    return np.asarray(labels)
+
+
+def _stratified_split_indices(labels: torch.Tensor | np.ndarray, train_frac: float = 0.7, val_frac: float = 0.15, seed: int = 42):
     """Stratified train/val/test split by label."""
     np.random.seed(seed)
-    labels_np = labels.numpy()
+    labels_np = _labels_to_numpy(labels)
     indices = np.arange(len(labels_np))
 
     # Stratified split
@@ -953,10 +1167,29 @@ def _stratified_split_indices(labels: torch.Tensor, train_frac: float = 0.7, val
     return np.array(train_idx), np.array(val_idx), np.array(test_idx)
 
 
-def _stratified_subset_by_count(labels: torch.Tensor, indices: np.ndarray, n_samples: int, seed: int = 42):
+def _assert_disjoint_splits(train_idx: np.ndarray, val_idx: np.ndarray, test_idx: np.ndarray) -> None:
+    """Fail fast if any sample index leaks across train/val/test splits."""
+    train_set = set(np.asarray(train_idx).tolist())
+    val_set = set(np.asarray(val_idx).tolist())
+    test_set = set(np.asarray(test_idx).tolist())
+
+    train_val_overlap = train_set.intersection(val_set)
+    train_test_overlap = train_set.intersection(test_set)
+    val_test_overlap = val_set.intersection(test_set)
+
+    if train_val_overlap or train_test_overlap or val_test_overlap:
+        raise ValueError(
+            "Data leakage detected: train/val/test splits overlap. "
+            f"overlaps(train,val)={len(train_val_overlap)}, "
+            f"(train,test)={len(train_test_overlap)}, "
+            f"(val,test)={len(val_test_overlap)}"
+        )
+
+
+def _stratified_subset_by_count(labels: torch.Tensor | np.ndarray, indices: np.ndarray, n_samples: int, seed: int = 42):
     """Subsample from indices preserving label distribution."""
     np.random.seed(seed)
-    labels_np = labels.numpy()
+    labels_np = _labels_to_numpy(labels)
     labels_subset = labels_np[indices]
     unique_labels = np.unique(labels_subset)
 
@@ -1231,16 +1464,98 @@ class ClusteringMetrics:
 
 
 # ============================================================================
-# Data Loading
+# Data Loading and Preprocessing
 # ============================================================================
 
-def build_tuple_token_dataset(parquet_path: str, n_value_bins: int = 10, max_seq_len: int = 1024) -> TokenizedCohort:
+def _impute_and_scale_data(
+    full_df: pd.DataFrame,
+    train_idx: np.ndarray,
+    val_idx: np.ndarray,
+    test_idx: np.ndarray,
+) -> Tuple[pd.DataFrame, Dict[str, StandardScaler]]:
+    """
+    Apply forward-fill imputation and scaling to the data.
+    
+    - Forward fill imputation: Fill missing values by carrying forward the last known value per patient
+    - Scaling: Fit StandardScaler only on training set (by patient), then apply to all
+    
+    Args:
+        full_df: Wide-format DataFrame with measurements (one row per patient per time step)
+        train_idx: Patient-level indices for training set
+        val_idx: Patient-level indices for validation set
+        test_idx: Patient-level indices for test set
+    
+    Returns:
+        - Imputed and scaled DataFrame
+        - Dictionary of fitted scalers per parameter
+    """
+    id_cols = ["PatientID", "In-hospital_death"]
+    time_col = "Time"
+    exclude_cols = id_cols + [time_col, "RecordID_x", "RecordID_y"]
+    value_cols = [c for c in full_df.columns if c not in exclude_cols]
+    
+    # Get patient ID list (in order) from the DataFrame by taking one row per patient
+    patient_list = full_df.drop_duplicates(subset="PatientID").sort_values("PatientID")["PatientID"].values
+    
+    # Map patient indices to actual patient IDs
+    train_patient_ids = set(patient_list[train_idx])
+    
+    # Step 1: Forward fill imputation per patient (pandas>=2 compatible)
+    df_filled = full_df.copy()
+    df_filled[value_cols] = (
+        df_filled.groupby("PatientID", sort=False)[value_cols]
+        .ffill()
+    )
+    
+    # Step 2: Fit scalers on training set patients only, then apply to all
+    scalers: Dict[str, StandardScaler] = {}
+    
+    # Extract training data (all rows for training patients)
+    train_data = df_filled[df_filled["PatientID"].isin(train_patient_ids)][value_cols]
+    
+    # Fit scalers per parameter on training data only
+    for col in value_cols:
+        scaler = StandardScaler()
+        col_data = train_data[[col]].dropna().values
+        if len(col_data) > 0:
+            scaler.fit(col_data)
+            scalers[col] = scaler
+    
+    # Apply scalers to all data
+    df_scaled = df_filled.copy()
+    for col in value_cols:
+        if col in scalers:
+            df_scaled[col] = scalers[col].transform(df_filled[[col]].values)
+    
+    return df_scaled, scalers
+
+
+def build_tuple_token_dataset(
+    parquet_path: str,
+    n_value_bins: int = 10,
+    max_seq_len: int = 1024,
+    train_idx: Optional[np.ndarray] = None,
+    val_idx: Optional[np.ndarray] = None,
+    test_idx: Optional[np.ndarray] = None,
+) -> TokenizedCohort:
     """Load data and build tuple-token sequences: (Parameter|time_bin|value_bin).
     
     Expects wide-format parquet with columns like: Time, Parameter1, Parameter2, ..., PatientID, In-hospital_death
+    
+    Args:
+        parquet_path: Path to parquet file
+        n_value_bins: Number of quantile bins for value discretization
+        max_seq_len: Maximum sequence length (tokens)
+        train_idx: Training set indices (needed for scaling fit). If None, data is not imputed/scaled.
+        val_idx: Validation set indices
+        test_idx: Test set indices
     """
     # Load wide-format data
     full_df = pd.read_parquet(parquet_path)
+    
+    # Apply imputation and scaling if split indices are provided
+    if train_idx is not None and val_idx is not None and test_idx is not None:
+        full_df, _ = _impute_and_scale_data(full_df, train_idx, val_idx, test_idx)
     
     # Extract patient IDs and labels
     id_cols = ["PatientID", "In-hospital_death"]
@@ -1249,6 +1564,31 @@ def build_tuple_token_dataset(parquet_path: str, n_value_bins: int = 10, max_seq
     # All other columns are parameters (measurements over time)
     exclude_cols = id_cols + [time_col, "RecordID_x", "RecordID_y"]
     value_cols = [c for c in full_df.columns if c not in exclude_cols]
+
+    # Compute global (dataset-level) quantile bins per parameter so value-bin tokens
+    # have consistent semantics across patients.
+    global_bin_edges: Dict[str, np.ndarray] = {}
+    for param in value_cols:
+        param_vals = full_df[param].dropna().values
+        if len(param_vals) == 0:
+            continue
+
+        try:
+            edges = np.quantile(param_vals, np.linspace(0, 1, n_value_bins + 1))
+            edges[0] -= 1e-9
+            edges[-1] += 1e-9
+            # If all values are identical, quantiles collapse to one value.
+            if np.allclose(edges, edges[0]):
+                v = float(edges[0])
+                edges = np.linspace(v - 1e-6, v + 1e-6, n_value_bins + 1)
+        except Exception:
+            vmin, vmax = float(np.min(param_vals)), float(np.max(param_vals))
+            if np.isclose(vmin, vmax):
+                edges = np.linspace(vmin - 1e-6, vmax + 1e-6, n_value_bins + 1)
+            else:
+                edges = np.linspace(vmin, vmax, n_value_bins + 1)
+
+        global_bin_edges[param] = edges
     
     # Build vocabulary and tokenize
     vocab = {PAD_TOKEN: 0, UNK_TOKEN: 1, BOS_TOKEN: 2, EOS_TOKEN: 3}
@@ -1274,13 +1614,9 @@ def build_tuple_token_dataset(parquet_path: str, n_value_bins: int = 10, max_seq
             if len(param_vals) == 0:
                 continue
 
-            values = param_vals.values
-            try:
-                bin_edges = np.quantile(values, np.linspace(0, 1, n_value_bins + 1))
-                bin_edges[0] -= 1e-9
-                bin_edges[-1] += 1e-9
-            except Exception:
-                bin_edges = np.linspace(values.min(), values.max(), n_value_bins + 1)
+            bin_edges = global_bin_edges.get(param)
+            if bin_edges is None:
+                continue
 
             for time_idx, (val_idx, row) in enumerate(group[[param]].iterrows()):
                 value = row[param]
@@ -1347,6 +1683,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--hard-negative-k", type=int, default=5)
     parser.add_argument("--time-freq-weight", type=float, default=0.1)
     parser.add_argument("--monitor-every", type=int, default=1)
+    parser.add_argument("--early-stop-patience", type=int, default=5, help="Stop if val loss does not improve for N epochs (0 disables)")
+    parser.add_argument("--early-stop-min-delta", type=float, default=1e-4, help="Minimum val loss improvement to reset patience")
+    parser.add_argument(
+        "--restore-best-weights",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Restore encoder weights from best val-loss epoch",
+    )
     parser.add_argument("--tsne-perplexities", type=int, nargs="+", default=[20, 30, 40, 50])
     parser.add_argument("--umap-neighbors", type=int, nargs="+", default=[10, 15, 30, 50])
     parser.add_argument("--umap-min-dist", type=float, nargs="+", default=[0.05, 0.1, 0.25])
@@ -1402,7 +1746,14 @@ def q31_pretrain_and_linear_probe(
         cohort.labels[test_idx],
     )
 
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    train_loader_generator = torch.Generator()
+    train_loader_generator.manual_seed(args.seed)
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=args.batch_size,
+        shuffle=True,
+        generator=train_loader_generator,
+    )
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
@@ -1427,6 +1778,9 @@ def q31_pretrain_and_linear_probe(
             mask_ratio=args.mask_ratio,
             drop_ratio=args.drop_ratio,
             monitor_every=args.monitor_every,
+            early_stop_patience=args.early_stop_patience,
+            early_stop_min_delta=args.early_stop_min_delta,
+            restore_best_weights=args.restore_best_weights,
         )
     elif args.ssl_method == "contrastive":
         pretrainer = ContrastivePretrainer(
@@ -1442,6 +1796,9 @@ def q31_pretrain_and_linear_probe(
             hard_negative_k=args.hard_negative_k,
             time_freq_weight=args.time_freq_weight,
             monitor_every=args.monitor_every,
+            early_stop_patience=args.early_stop_patience,
+            early_stop_min_delta=args.early_stop_min_delta,
+            restore_best_weights=args.restore_best_weights,
         )
     else:
         pretrainer = HybridPretrainer(
@@ -1459,6 +1816,9 @@ def q31_pretrain_and_linear_probe(
             hard_negative_k=args.hard_negative_k,
             time_freq_weight=args.time_freq_weight,
             monitor_every=args.monitor_every,
+            early_stop_patience=args.early_stop_patience,
+            early_stop_min_delta=args.early_stop_min_delta,
+            restore_best_weights=args.restore_best_weights,
         )
 
     pretrainer.pretrain(train_loader, val_loader, device, args.pretrain_epochs, args.lr)
@@ -1466,6 +1826,11 @@ def q31_pretrain_and_linear_probe(
     if len(monitoring['train_losses']) > 0:
         print(f"Final train loss: {monitoring['train_losses'][-1]:.4f}")
         print(f"Final val loss: {monitoring['val_losses'][-1]:.4f}")
+        if monitoring.get("best_epoch", 0) > 0:
+            print(
+                f"Best val loss: {monitoring['best_val_loss']:.4f} at epoch {monitoring['best_epoch']}"
+                f" | Early stopped: {monitoring.get('early_stopped', False)}"
+            )
     else:
         print("No pretraining epochs run (pretrain_epochs=0)")
 
@@ -1485,11 +1850,20 @@ def q31_pretrain_and_linear_probe(
     rep_silhouette = rep_quality.silhouette_score(test_embeds, test_labels)
     rep_class_sep = rep_quality.compute_class_separation(test_embeds, test_labels)
     rep_centroid_dist = rep_class_sep.get("inter_class_distance", float("nan"))
+    collapse_metrics = pretrainer._collapse_metrics(test_embeds)
 
     print(f"Test AUROC: {test_auroc:.4f}")
     print(f"Test AUPRC: {test_auprc:.4f}")
     print(f"Embedding Silhouette: {rep_silhouette:.4f}")
     print(f"Embedding Centroid Distance: {rep_centroid_dist:.4f}")
+    print(
+        "Collapse metrics: "
+        f"std_mean={collapse_metrics['feature_std_mean']:.6f}, "
+        f"std_min={collapse_metrics['feature_std_min']:.6f}, "
+        f"active_dims={collapse_metrics['active_dims']:.0f}, "
+        f"effective_rank={collapse_metrics['effective_rank']:.2f}, "
+        f"mean_abs_cosine_offdiag={collapse_metrics['mean_abs_cosine_offdiag']:.4f}"
+    )
 
     if monitoring.get("representation_monitor"):
         print("Per-epoch representation monitoring:")
@@ -1505,6 +1879,7 @@ def q31_pretrain_and_linear_probe(
         "test_auprc": test_auprc,
         "embedding_silhouette": rep_silhouette,
         "embedding_centroid_distance": rep_centroid_dist,
+        "collapse_metrics": collapse_metrics,
         "pretrain_monitoring": monitoring,
         "embeddings_train": train_embeds,
         "labels_train": train_labels,
@@ -1549,6 +1924,8 @@ def q32_label_scarcity(
     for train_size in train_sizes:
         print(f"\nTrain size: {train_size}")
         subset_idx = _stratified_subset_by_count(cohort.labels, train_idx, train_size, seed=args.seed)
+        if len(np.intersect1d(subset_idx, test_idx)) > 0:
+            raise ValueError("Data leakage detected: train subset overlaps with test set.")
 
         # Extract embeddings from subset
         subset_dataset = PatientTokenDataset(
@@ -1664,27 +2041,50 @@ def _load_sweep_config(path: str) -> Dict:
         return yaml.safe_load(content)
 
 
+def _get_patient_level_labels_and_indices(parquet_path: str) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Extract one label per patient and patient count.
+    
+    Returns:
+        - labels array (one per unique patient)
+        - patient_ids array (corresponding patient IDs)
+    """
+    full_df = pd.read_parquet(parquet_path)
+    
+    # Get unique patients with their labels
+    patient_labels = full_df.drop_duplicates(subset="PatientID")[["PatientID", "In-hospital_death"]]
+    patient_labels = patient_labels.sort_values("PatientID").reset_index(drop=True)
+    
+    return patient_labels["In-hospital_death"].values, patient_labels["PatientID"].values
+
+
 def _run_pipeline(args: argparse.Namespace) -> Dict:
+    _set_global_reproducibility(args.seed)
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     print(f"Using device: {device}")
 
-    # Load and tokenize data
+    # Step 1: Get patient labels and compute stratified split (before imputation/scaling)
+    labels, _ = _get_patient_level_labels_and_indices(args.parquet)
+    train_idx, val_idx, test_idx = _stratified_split_indices(
+        labels,
+        train_frac=0.7,
+        val_frac=0.15,
+        seed=args.seed,
+    )
+    _assert_disjoint_splits(train_idx, val_idx, test_idx)
+    
+    # Step 2: Load, impute, scale, and tokenize data
     cohort = build_tuple_token_dataset(
         parquet_path=args.parquet,
         n_value_bins=args.value_bins,
         max_seq_len=args.max_seq_len,
+        train_idx=train_idx,
+        val_idx=val_idx,
+        test_idx=test_idx,
     )
     print(
         f"Tokenized cohort: patients={cohort.input_ids.shape[0]}, "
         f"seq_len={cohort.input_ids.shape[1]}, vocab={len(cohort.vocab)}"
-    )
-
-    # Stratified split
-    train_idx, val_idx, test_idx = _stratified_split_indices(
-        cohort.labels,
-        train_frac=0.7,
-        val_frac=0.15,
-        seed=args.seed,
     )
 
     # Q3.1: Pretrain and linear probe
@@ -1728,6 +2128,11 @@ def _run_pipeline(args: argparse.Namespace) -> Dict:
         "summary/test_auprc": q31_results["test_auprc"],
         "summary/embedding_silhouette": q31_results["embedding_silhouette"],
         "summary/embedding_centroid_distance": q31_results["embedding_centroid_distance"],
+        "summary/feature_std_mean": q31_results["collapse_metrics"]["feature_std_mean"],
+        "summary/feature_std_min": q31_results["collapse_metrics"]["feature_std_min"],
+        "summary/active_dims": q31_results["collapse_metrics"]["active_dims"],
+        "summary/effective_rank": q31_results["collapse_metrics"]["effective_rank"],
+        "summary/mean_abs_cosine_offdiag": q31_results["collapse_metrics"]["mean_abs_cosine_offdiag"],
         "summary/q33_silhouette": q33_results["silhouette_score"],
         "summary/q33_davies_bouldin": q33_results["davies_bouldin_score"],
     }

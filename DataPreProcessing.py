@@ -3,8 +3,8 @@ import os
 from tqdm import tqdm
 import shutil
 
-pathToData = "physionet.org/set-a"
-output_path = "physionet.org/Outcomes-a.txt" # Assuming outcomes are here
+pathToData = "ml4h_data/p1/set-a"
+output_path = "ml4h_data/p1/Outcomes-a.txt" # Assuming outcomes are here
 
 all_data = []
 
@@ -58,4 +58,7 @@ if os.path.exists(output_path):
         os.remove(output_path)      # Delete if it's a file
 
 # Save to parquet
+# NOTE: Imputation (forward fill) and scaling are applied in auto_encoder_base.py,
+# not here. This keeps preprocessing modular and allows scaling to be fit only on
+# the training set.
 full_df.to_parquet("processedDataProxy.parquet", engine="pyarrow", index=False)
